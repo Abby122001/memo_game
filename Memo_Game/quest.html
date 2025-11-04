@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Select Level</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  /* Reset and base */
+  body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background: #50733f; /* dark green background */
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /* Container */
+  .level-select-container {
+    background: linear-gradient(145deg, #ffd4a3, #dfb18f);
+    border-radius: 25px;
+    width: 370px;
+    padding: 20px 25px 60px;
+    box-shadow:
+      inset 4px 4px 16px #b49067,
+      inset -4px -4px 16px #ffd9b9,
+      6px 6px 10px rgba(0,0,0,0.3);
+    position: relative;
+    user-select: none;
+  }
+  /* Header */
+  .back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(145deg, #7a3b0d, #5d2a00);
+    border: none;
+    color: #f6c440;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+  }
+
+  .back-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+
+  .title-bar {
+    background: linear-gradient(145deg, #7a3b0d, #5d2a00);
+    border-radius: 20px;
+    width: 250px;
+    margin: 10px auto 30px;
+    padding: 12px 60px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #f6c440;
+    text-shadow: 1px 1px 0 #7a3b0d;
+    letter-spacing: 2px;
+    position: relative;
+  }
+
+
+  .levels-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    justify-items: center;
+  }
+
+  .level-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #5b2e00, #7e4700);
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow:
+      inset 2px 2px 6px #ac6f00,
+      inset -2px -2px 6px #1a0c00;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .required-stars {
+    position: absolute;
+    bottom: 2px;
+    font-size: 12px;
+    color: #f6c440;
+    text-shadow: 0 0 3px #000;
+    font-weight: bold;
+  }
+  .level-button:hover:not(.locked) {
+    box-shadow:
+      0 0 10px #ffb740,
+      inset 2px 2px 6px #ac6f00,
+      inset -2px -2px 6px #1a0c00;
+    transform: scale(1.1);
+    z-index: 10;
+  }
+  /* Selected level highlight */
+  .level-button.selected {
+    outline: 3.5px solid #f6c440;
+    outline-offset: 3px;
+  }
+  /* Locked level */
+  .level-button.locked {
+    background: linear-gradient(145deg, #512f16, #3d2b14);
+    color: #bba287aa;
+    cursor: default;
+    box-shadow: inset 0 0 10px #2b210e;
+  }
+  /* Lock icon for locked levels */
+  .lock-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+  /* Stars container */
+  .stars {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #f6c440; /* star color (orange-red) */
+    line-height: 1;
+    user-select: none;
+  }
+  /* Empty star color and some dim effect */
+  .stars .empty {
+    color: #ddbba6;
+  }
+  /* Highlight last level differently */
+  .level-button.level-28 {
+    background: linear-gradient(145deg, #a84017, #d45216);
+  }
+  /* Bottom controls */
+  .bottom-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 50px;
+  }
+  .btn-arrow {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(145deg, #5b2e00, #7e4700);
+    border-radius: 15px;
+    color: white;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 35px;
+    text-align: center;
+    box-shadow:
+      inset 2px 2px 6px #ac6f00,
+      inset -2px -2px 6px #1a0c00;
+    user-select: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  .btn-arrow:hover {
+    background: linear-gradient(145deg, #804a00, #a45f00);
+  }
+</style>
+</head>
+<body>
+
+<div class="level-select-container" role="main" aria-label="Select Level">
+  <button class="back-button" onclick="window.location.href='index.html'">
+    <i class="fas fa-home"></i>
+  </button>
+  <div class="title-bar">SELECT LEVEL</div>
+
+  <div class="levels-grid" id="levelsGrid">
+    <!-- JavaScript will insert levels here -->
+  </div>
+
+  <div class="bottom-controls">
+    <div class="btn-arrow" id="prevArrow" aria-label="Previous Page" role="button" tabindex="0">&#9664;</div>
+    <div class="btn-arrow" id="nextArrow" aria-label="Next Page" role="button" tabindex="0">&#9654;</div>
+  </div>
+</div>
+
+<script>
+  // Level data with required stars to unlock
+  const levels = [
+    { number: 1, stars: 0, locked: false, requiredStars: 0 },
+    { number: 2, stars: 0, locked: true, requiredStars: 1 },
+    { number: 3, stars: 0, locked: true, requiredStars: 1 },
+    { number: 4, stars: 0, locked: true, requiredStars: 1 },
+    { number: 5, stars: 0, locked: true, requiredStars: 2 },
+    { number: 6, stars: 0, locked: true, requiredStars: 2 },
+    { number: 7, stars: 0, locked: true, requiredStars: 2 },
+    { number: 8, stars: 0, locked: true, requiredStars: 2 },
+    { number: 9, stars: 0, locked: true, requiredStars: 3 },
+    { number: 10, stars: 0, locked: true, requiredStars: 3 },
+    { number: 11, stars: 0, locked: true, requiredStars: 3 },
+    { number: 12, stars: 0, locked: true, requiredStars: 3 },
+    { number: 13, stars: 0, locked: true, requiredStars: 4 },
+    { number: 14, stars: 0, locked: true, requiredStars: 4 },
+    { number: 15, stars: 0, locked: true, requiredStars: 4 },
+    { number: 16, stars: 0, locked: true, requiredStars: 4 },
+    { number: 17, stars: 0, locked: true, requiredStars: 5 },
+    { number: 18, stars: 0, locked: true, requiredStars: 5 },
+    { number: 19, stars: 0, locked: true, requiredStars: 5 },
+    { number: 20, stars: 0, locked: true, requiredStars: 5 },
+    { number: 21, stars: 0, locked: true, requiredStars: 6 },
+    { number: 22, stars: 0, locked: true, requiredStars: 6 },
+    { number: 23, stars: 0, locked: true, requiredStars: 6 },
+    { number: 24, stars: 0, locked: true, requiredStars: 6 },
+  ];
+
+  const levelsGrid = document.getElementById('levelsGrid');
+  const prevArrow = document.getElementById('prevArrow');
+  const nextArrow = document.getElementById('nextArrow');
+
+  let selectedLevelIndex = null;
+  let currentPage = 0; // 0 = first page, 1 = second page
+  const levelsPerPage = 12;
+
+  function createStars(count) {
+    let starsHTML = '';
+    for (let i = 1; i <= 3; i++) {
+      if (i <= count) {
+        starsHTML += '★';
+      } else {
+        starsHTML += '<span class="empty">★</span>';
+      }
+    }
+    return starsHTML;
+  }
+
+  function updateLevelLocks() {
+    // First level is always unlocked
+    levels[0].locked = false;
+    
+    // Check each level to see if it should be unlocked
+    for (let i = 1; i < levels.length; i++) {
+      const prevLevel = levels[i - 1];
+      const currentLevel = levels[i];
+      
+      // Unlock if previous level has enough stars
+      currentLevel.locked = prevLevel.stars < currentLevel.requiredStars;
+    }
+  }
+
+  function renderLevels() {
+    updateLevelLocks();
+    levelsGrid.innerHTML = '';
+    const start = currentPage * levelsPerPage;
+    const end = start + levelsPerPage;
+    const visibleLevels = levels.slice(start, end);
+
+    visibleLevels.forEach((level, idx) => {
+      const btn = document.createElement('div');
+      btn.classList.add('level-button');
+      if (level.locked) btn.classList.add('locked');
+      if (level.specialClass) btn.classList.add(level.specialClass);
+
+      if (level.locked) {
+        btn.innerHTML = '<span class="lock-icon" aria-label="Locked level" role="img">🔒</span>';
+      } else {
+        btn.textContent = level.number;
+        if (level.stars !== undefined) {
+          const stars = document.createElement('div');
+          stars.classList.add('stars');
+          stars.innerHTML = createStars(level.stars);
+          btn.appendChild(stars);
+        }
+        btn.setAttribute('tabindex', '0');
+        btn.setAttribute('role', 'button');
+        btn.setAttribute('aria-label', `Level ${level.number}`);
+        btn.addEventListener('click', () => selectLevel(start + idx));
+        btn.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectLevel(start + idx);
+          }
+        });
+      }
+      levelsGrid.appendChild(btn);
+    });
+
+    // Disable/enable arrows
+    prevArrow.style.opacity = currentPage === 0 ? '0.5' : '1';
+    nextArrow.style.opacity = end >= levels.length ? '0.5' : '1';
+  }
+
+  function selectLevel(idx) {
+    if (levels[idx].locked) return;
+
+    // Remove highlight from any previously selected
+    document.querySelectorAll('.level-button.selected').forEach(btn => btn.classList.remove('selected'));
+
+    const btnIndexInPage = idx % levelsPerPage;
+    const btn = levelsGrid.children[btnIndexInPage];
+    btn.classList.add('selected');
+    selectedLevelIndex = idx;
+    
+    // Automatically start the selected level
+    alert(`Starting Level ${levels[selectedLevelIndex].number}`);
+  }
+
+  prevArrow.addEventListener('click', () => {
+    if (currentPage > 0) {
+      currentPage--;
+      renderLevels();
+    }
+  });
+
+  nextArrow.addEventListener('click', () => {
+    const totalPages = Math.ceil(levels.length / levelsPerPage);
+    if (currentPage < totalPages - 1) {
+      currentPage++;
+      renderLevels();
+    }
+  });
+
+  // Keyboard support for arrows
+  [prevArrow, nextArrow].forEach((arrow) => {
+    arrow.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        arrow.click();
+      }
+    });
+  });
+
+  renderLevels();
+
+
+</script>
+
+</body>
+</html>

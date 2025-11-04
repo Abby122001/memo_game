@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memo Game Menu</title>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>MEMO GAME</h1>
+
+  <div class="menu">
+    <button class="quick" onclick="window.location.href='quick_game.html'">QUICK GAME</button>
+    <button class="quest" onclick="window.location.href='quest.html '">QUEST</button>
+   </div>
+
+   <div class="bottom-right">
+    <i class="fas fa-cog settings-icon"></i>
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h3>Game Settings</h3>
+        <button class="close-settings">&times;</button>
+      </div>
+      <div class="settings-content">
+        <div class="setting-option">
+          <span class="setting-label">Music</span>
+          <label class="switch">
+            <input type="checkbox" id="music-toggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-option">
+          <span class="setting-label">Sound FX</span>
+          <label class="switch">
+            <input type="checkbox" id="sound-toggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-option">
+          <span class="setting-label">Language</span>
+          <select id="language" class="language-select">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="settings.js"></script>
+
+</body>
+</html>

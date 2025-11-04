@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Game - Memory Card Game</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: #50733f; /* Dark green background */
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #FCB53B; /* Dark brown text */
+    }
+
+    .back-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(145deg, #7a3b0d, #5d2a00);
+      border: none;
+      color: #f6c440;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .back-button:hover {
+      background: rgba(255,255,255,0.3);
+      transform: scale(1.1);
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 40px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .game-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+
+    .game-option {
+      background: linear-gradient(145deg, #ffd4a3, #dfb18f);
+      border-radius: 15px;
+      padding: 25px 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #b49067;
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 
+        inset 2px 2px 8px #b49067,
+        inset -2px -2px 8px #ffd9b9,
+        4px 4px 10px rgba(0,0,0,0.2);
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .game-option:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .game-option:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .game-option i {
+      font-size: 40px;
+      margin-bottom: 12px;
+      display: block;
+      color: #7a3b0d;
+      text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+    }
+
+    .game-option h2 {
+      margin: 8px 0 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #5d2a00;
+      text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+    }
+
+    @media (max-width: 600px) {
+      .game-options {
+        grid-template-columns: 1fr;
+        max-width: 300px;
+        gap: 15px;
+      }
+      
+      h1 {
+        font-size: 32px;
+        margin-bottom: 30px;
+      }
+
+      .game-option {
+        padding: 20px 15px;
+        min-height: 130px;
+      }
+
+      .game-option i {
+        font-size: 36px;
+      }
+
+      .game-option h2 {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="window.location.href='index.html'">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+
+  <h1>QUICK GAME</h1>
+  
+  <div class="game-options">
+    <div class="game-option" onclick="startGame('animals')">
+      <i class="fas fa-paw"></i>
+      <h2>Animals</h2>
+    </div>
+    <div class="game-option" onclick="startGame('icons')">
+      <i class="fab fa-github"></i>
+      <h2>Icons</h2>
+    </div>
+    <div class="game-option" onclick="startGame('fruits')">
+      <i class="fas fa-apple-alt"></i>
+      <h2>Fruits and vegetables</h2>
+    </div>
+    <div class="game-option" onclick="startGame('vehicles')">
+      <i class="fas fa-car"></i>
+      <h2>Vehicles</h2>
+    </div>
+  </div>
+
+  <script>
+    function startGame(category) {
+      // Add click feedback
+      const clickedElement = event.currentTarget;
+      clickedElement.style.transform = 'scale(0.98)';
+      clickedElement.style.opacity = '0.8';
+      
+      // Play a sound effect (optional)
+      const clickSound = new Audio('sounds/click.mp3');
+      clickSound.volume = 0.5;
+      clickSound.play().catch(e => console.log('Could not play sound:', e));
+      
+      // Reset the button style after a short delay
+      setTimeout(() => {
+        clickedElement.style.transform = '';
+        clickedElement.style.opacity = '';
+      }, 150);
+      
+      // Store the selected category in localStorage
+      localStorage.setItem('selectedCategory', category);
+      
+      // Log the selected category
+      console.log(`Starting game with category: ${category}`);
+      
+      // Redirect to the game page with the selected category
+      // You'll need to create this page or adjust the path as needed
+      window.location.href = `game.html?category=${category}`;
+      
+      // For testing, you can use this alert instead of redirecting
+      // alert(`Starting ${category} game!`);
+    }
+  </script>
+</body>
+</html>

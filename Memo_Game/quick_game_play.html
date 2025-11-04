@@ -1,0 +1,766 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Game - Memory Challenge</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+    background-color: #50733f;
+    min-height: 100vh;
+    padding: 20px;
+    color: #5d2a00;
+    position: relative;
+    }
+
+    .back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(145deg, #7a3b0d, #5d2a00);
+    border: none;
+    color: #f6c440;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    z-index: 100;
+    }
+
+    .back-button:hover {
+    transform: scale(1.1);
+    background: rgba(255,255,255,0.3);
+    }
+
+    .game-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: linear-gradient(145deg, #ffd4a3, #dfb18f);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .game-header {
+    text-align: center;
+    margin-bottom: 30px;
+    }
+
+    .game-title {
+    font-size: 2.5rem;
+    color: #5d2a00;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .category-display {
+    font-size: 1.5rem;
+    color: #7a3b0d;
+    margin-bottom: 20px;
+    }
+
+    .difficulty-levels {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    }
+
+    .difficulty-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .difficulty-btn.easy { background-color: #4CAF50; color: white; }
+    .difficulty-btn.medium { background-color: #FFC107; color: #333; }
+    .difficulty-btn.hard { background-color: #FF5722; color: white; }
+    .difficulty-btn.expert { background-color: #9C27B0; color: white; }
+
+    .difficulty-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .difficulty-btn:active {
+    transform: translateY(1px);
+    }
+
+    .hint-display {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    font-size: 1.1rem;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    }
+
+    .game-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+    }
+
+    .card {
+      aspect-ratio: 1;
+      background: linear-gradient(145deg, #7a3b0d, #5d2a00);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      transform-style: preserve-3d;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      perspective: 1000px;
+    }
+    
+    .card-content {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backface-visibility: hidden;
+    }
+    
+    .card i {
+      font-size: 2.5rem;
+      color: white;
+      transition: all 0.3s;
+    }
+    
+    .card.flipped {
+      transform: rotateY(180deg);
+      background: white;
+    }
+    
+    .card.flipped i {
+      color: #5d2a00;
+    }
+    
+    .card.matched {
+      transform: rotateY(180deg);
+      background: #4CAF50;
+      pointer-events: none;
+    }
+
+    .card.flipped {
+    transform: rotateY(180deg);
+    background: white;
+    }
+
+    .card.matched {
+    transform: rotateY(180deg);
+    background: #4CAF50;
+    pointer-events: none;
+    }
+
+    .card i {
+    font-size: 2rem;
+    color: white;
+    transition: all 0.3s;
+    }
+
+    .card.flipped i {
+    color: #5d2a00;
+    }
+
+    .game-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 2px solid #b49067;
+    }
+
+    .stat {
+    text-align: center;
+    }
+
+    .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #5d2a00;
+    }
+
+    .stat-label {
+    font-size: 0.9rem;
+    color: #7a3b0d;
+    }
+
+    @media (max-width: 768px) {
+    .game-board {
+    grid-template-columns: repeat(3, 1fr);
+    }
+
+    .difficulty-btn {
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    }
+
+    .game-title {
+    font-size: 2rem;
+    }
+
+    .category-display {
+    font-size: 1.2rem;
+    }
+    }
+
+    @media (max-width: 480px) {
+    .game-board {
+    grid-template-columns: repeat(2, 1fr);
+    }
+
+    .difficulty-levels {
+    flex-direction: column;
+    align-items: center;
+    }
+
+    .difficulty-btn {
+    width: 80%;
+    margin-bottom: 10px;
+    }
+    }
+    </style>
+    </head>
+    <body>
+    <button class="back-button" id="backButton">
+    <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <div class="game-container">
+    <div class="game-header">
+    <h1 class="game-title">Quick Game</h1>
+    <div class="category-display" id="categoryDisplay">Category: </div>
+
+    <div class="difficulty-levels">
+    <button class="difficulty-btn easy" data-difficulty="easy">Easy</button>
+    <button class="difficulty-btn medium" data-difficulty="medium">Medium</button>
+    <button class="difficulty-btn hard" data-difficulty="hard">Hard</button>
+    <button class="difficulty-btn expert" data-difficulty="expert">Expert</button>
+    </div>
+
+    <div class="hint-display" id="hintDisplay">
+    Select a difficulty level to start the game!
+    </div>
+    </div>
+
+    <div class="game-board" id="gameBoard">
+    <!-- Cards will be generated here by JavaScript -->
+    </div>
+
+    <div class="game-stats">
+    <div class="stat">
+    <div class="stat-value" id="moves">0</div>
+    <div class="stat-label">Moves</div>
+    </div>
+    <div class="stat">
+    <div class="stat-value" id="timer">0:00</div>
+    <div class="stat-label">Time</div>
+    </div>
+    <div class="stat">
+    <div class="stat-value" id="pairs">0/0</div>
+    <div class="stat-label">Pairs</div>
+    </div>
+    </div>
+    </div>
+
+    <script>
+    // Game data
+    const categories = {
+    animals: {
+      name: 'Animals',
+      pairs: [
+        { word: 'Dog', icon: 'dog' },
+        { word: 'Cat', icon: 'cat' },
+        { word: 'Hippo', icon: 'hippo' },
+        { word: 'Fish', icon: 'fish' },
+        { word: 'Frog', icon: 'frog' },
+        { word: 'Bird', icon: 'kiwi-bird' },
+        { word: 'Otter', icon: 'otter' },
+        { word: 'Dove', icon: 'dove' },
+        { word: 'Horse', icon: 'horse' },
+        { word: 'Spider', icon: 'spider' },
+        { word: 'Dragon', icon: 'dragon' },
+        { word: 'Feather', icon: 'feather-alt' }
+      ]
+    },
+    icons: {
+      name: 'Icons',
+      pairs: [
+        { word: 'Heart', icon: 'heart' },
+        { word: 'Star', icon: 'star' },
+        { word: 'Bell', icon: 'bell' },
+        { word: 'Envelope', icon: 'envelope' },
+        { word: 'Camera', icon: 'camera' },
+        { word: 'Music', icon: 'music' },
+        { word: 'Gift', icon: 'gift' },
+        { word: 'Key', icon: 'key' },
+        { word: 'Home', icon: 'home' },
+        { word: 'Flag', icon: 'flag' },
+        { word: 'Bookmark', icon: 'bookmark' },
+        { word: 'Cloud', icon: 'cloud' }
+      ]
+    },
+    fruits: {
+      name: 'Fruits and Vegetables',
+      pairs: [
+        { word: 'Apple', icon: 'apple-alt' },
+        { word: 'Lemon', icon: 'lemon' },
+        { word: 'Pepper', icon: 'pepper-hot' },
+        { word: 'Carrot', icon: 'carrot' },
+        { word: 'Orange', icon: 'apple-whole' },
+        { word: 'Lime', icon: 'lemon' },
+        { word: 'Chili', icon: 'pepper-hot' },
+        { word: 'Carrot', icon: 'carrot' },
+        { word: 'Pear', icon: 'apple-alt' },
+        { word: 'Lime', icon: 'lemon' },
+        { word: 'Jalapeño', icon: 'pepper-hot' },
+        { word: 'Carrot', icon: 'carrot' }
+      ]
+    },
+    vehicles: {
+      name: 'Vehicles',
+      pairs: [
+        { word: 'Car', icon: 'car' },
+        { word: 'Truck', icon: 'truck' },
+        { word: 'Motorcycle', icon: 'motorcycle' },
+        { word: 'Bicycle', icon: 'bicycle' },
+        { word: 'Bus', icon: 'bus' },
+        { word: 'Train', icon: 'train' },
+        { word: 'Plane', icon: 'plane' },
+        { word: 'Ship', icon: 'ship' },
+        { word: 'Helicopter', icon: 'helicopter' },
+        { word: 'Monster Truck', icon: 'truck-monster' },
+        { word: 'Pickup Truck', icon: 'truck-pickup' },
+        { word: 'Tram', icon: 'tram' }
+      ]
+    }
+    };
+
+    // Game state
+    let gameState = {
+    category: '',
+    difficulty: '',
+    cards: [],
+    flippedCards: [],
+    matchedPairs: 0,
+    moves: 0,
+    timer: 0,
+    timerInterval: null,
+    canFlip: true,
+    totalPairs: 0
+    };
+
+    // DOM elements
+    const gameBoard = document.getElementById('gameBoard');
+    const categoryDisplay = document.getElementById('categoryDisplay');
+    const hintDisplay = document.getElementById('hintDisplay');
+    const movesDisplay = document.getElementById('moves');
+    const timerDisplay = document.getElementById('timer');
+    const pairsDisplay = document.getElementById('pairs');
+    const difficultyButtons = document.querySelectorAll('.difficulty-btn');
+    const backButton = document.getElementById('backButton');
+
+    // Initialize the game
+    function initGame() {
+    // Get category from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const category = urlParams.get('category') || 'animals';
+
+    if (!categories[category]) {
+    alert('Invalid category selected. Redirecting to Animals.');
+    window.location.href = 'quick_game.html';
+    return;
+    }
+
+    gameState.category = category;
+    categoryDisplay.textContent = `Category: ${categories[category].name}`;
+
+    // Set up event listeners
+    difficultyButtons.forEach(button => {
+    button.addEventListener('click', handleDifficultySelect);
+    });
+
+    backButton.addEventListener('click', () => {
+    if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
+    window.location.href = 'quick_game.html';
+    }
+    });
+    }
+
+    // Handle difficulty selection
+    function handleDifficultySelect(e) {
+    const difficulty = e.target.dataset.difficulty;
+    if (!difficulty) return;
+
+    gameState.difficulty = difficulty;
+
+    // Set up game based on difficulty
+    let pairs;
+    switch(difficulty) {
+    case 'easy':
+    pairs = 6;
+    gameBoard.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    break;
+    case 'medium':
+    pairs = 8;
+    gameBoard.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    break;
+    case 'hard':
+    pairs = 10;
+    gameBoard.style.gridTemplateColumns = 'repeat(5, 1fr)';
+    break;
+    case 'expert':
+    pairs = 12;
+    gameBoard.style.gridTemplateColumns = 'repeat(6, 1fr)';
+    break;
+    default:
+    pairs = 6;
+    }
+
+    gameState.totalPairs = pairs;
+    startGame(pairs);
+    }
+
+    // Start the game with specified number of pairs
+    function startGame(pairs) {
+    // Reset game state
+    gameState.cards = [];
+    gameState.flippedCards = [];
+    gameState.matchedPairs = 0;
+    gameState.moves = 0;
+    gameState.timer = 0;
+    gameState.canFlip = true;
+
+    // Clear previous game
+    clearInterval(gameState.timerInterval);
+    gameBoard.innerHTML = '';
+
+    // Update UI
+    updateStats();
+
+    // Create card pairs
+    const categoryData = categories[gameState.category];
+    const selectedIcons = [];
+    const selectedHints = [];
+
+    // Randomly select pairs
+    const selectedPairs = [];
+    const availablePairs = [...categoryData.pairs];
+    
+    while (selectedPairs.length < pairs && availablePairs.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availablePairs.length);
+      selectedPairs.push(availablePairs[randomIndex]);
+      availablePairs.splice(randomIndex, 1);
+    }
+
+    // Create cards (1 word and 1 icon for each pair)
+    const cards = [];
+    selectedPairs.forEach((pair, index) => {
+      // Add word card
+      cards.push({ 
+        type: 'word', 
+        content: pair.word, 
+        pairId: index,
+        id: index * 2 
+      });
+      // Add icon card
+      cards.push({ 
+        type: 'icon', 
+        content: pair.icon, 
+        pairId: index,
+        id: index * 2 + 1 
+      });
+    });
+
+    // Shuffle cards
+    gameState.cards = shuffleArray(cards);
+
+    // Render cards
+    renderCards();
+
+    // Start timer
+    startTimer();
+    }
+
+    // Render cards on the board
+    function renderCards() {
+      gameBoard.innerHTML = '';
+
+      gameState.cards.forEach((card, index) => {
+        const cardElement = document.createElement('div');
+        cardElement.className = 'card';
+        if (card.matched) cardElement.classList.add('matched');
+
+        // Create card content based on type
+        const contentElement = document.createElement('div');
+        contentElement.className = 'card-content';
+
+        if (card.type === 'word') {
+          contentElement.textContent = card.content;
+          contentElement.style.fontWeight = 'bold';
+          contentElement.style.fontSize = '1.2rem';
+        } else {
+          const iconElement = document.createElement('i');
+          iconElement.className = `fas fa-${card.content}`;
+          contentElement.appendChild(iconElement);
+        }
+
+        cardElement.appendChild(contentElement);
+        cardElement.dataset.index = index;
+
+    if (!card.matched) {
+    cardElement.addEventListener('click', handleCardClick);
+    }
+
+    gameBoard.appendChild(cardElement);
+    });
+    }
+
+    // Handle card click
+    function handleCardClick(e) {
+    if (!gameState.canFlip) return;
+
+    const cardElement = e.currentTarget;
+    const index = parseInt(cardElement.dataset.index);
+    const card = gameState.cards[index];
+
+    // Don't allow flipping already flipped or matched cards
+    if (card.flipped || card.matched) return;
+
+    // Flip the card
+    cardElement.classList.add('flipped');
+    card.flipped = true;
+    gameState.flippedCards.push({ index, element: cardElement });
+
+    // Show hint for the first card
+    if (gameState.flippedCards.length === 1) {
+    hintDisplay.textContent = `Hint: ${card.hint}`;
+    }
+
+    // Check for match if two cards are flipped
+    if (gameState.flippedCards.length === 2) {
+      gameState.moves++;
+      updateStats();
+
+      const firstCard = gameState.cards[gameState.flippedCards[0].index];
+      const secondCard = gameState.cards[gameState.flippedCards[1].index];
+
+      // Check if the two flipped cards are a matching pair (one word and one icon with same pairId)
+      if (firstCard.pairId === secondCard.pairId && 
+          ((firstCard.type === 'word' && secondCard.type === 'icon') || 
+           (firstCard.type === 'icon' && secondCard.type === 'word'))) {
+    // Match found
+    firstCard.matched = true;
+    secondCard.matched = true;
+
+    gameState.matchedPairs++;
+    updateStats();
+
+    // Mark cards as matched
+    gameState.flippedCards.forEach(card => {
+    card.element.classList.add('matched');
+    });
+
+    // Clear flipped cards
+    gameState.flippedCards = [];
+
+    // Check for win
+    if (gameState.matchedPairs === gameState.totalPairs) {
+    endGame();
+    }
+    } else {
+    // No match
+    gameState.canFlip = false;
+
+    // Flip cards back after delay
+    setTimeout(() => {
+    gameState.flippedCards.forEach(card => {
+    const cardElement = card.element;
+    const cardIndex = card.index;
+
+    gameState.cards[cardIndex].flipped = false;
+    cardElement.classList.remove('flipped');
+    });
+
+    gameState.flippedCards = [];
+    gameState.canFlip = true;
+
+    // Clear hint
+    hintDisplay.textContent = 'Try to find a matching pair!';
+    }, 1000);
+    }
+    }
+    }
+
+    // Update game stats
+    function updateStats() {
+    movesDisplay.textContent = gameState.moves;
+    pairsDisplay.textContent = `${gameState.matchedPairs}/${gameState.totalPairs}`;
+
+    // Update timer display
+    const minutes = Math.floor(gameState.timer / 60);
+    const seconds = gameState.timer % 60;
+    timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    // Start the game timer
+    function startTimer() {
+    clearInterval(gameState.timerInterval);
+    gameState.timer = 0;
+    updateStats();
+
+    gameState.timerInterval = setInterval(() => {
+    gameState.timer++;
+    updateStats();
+    }, 1000);
+    }
+
+    // End the game
+    function endGame() {
+      clearInterval(gameState.timerInterval);
+
+      // Calculate score
+      const score = calculateScore();
+      const timeTaken = formatTime(gameState.timer);
+      
+      // Determine level completed
+      let levelName = '';
+      switch(gameState.difficulty) {
+        case 'easy': levelName = 'Easy'; break;
+        case 'medium': levelName = 'Medium'; break;
+        case 'hard': levelName = 'Hard'; break;
+        case 'expert': levelName = 'Expert'; break;
+        default: levelName = 'this level';
+      }
+
+      // Show win message with level completion
+      hintDisplay.innerHTML = `
+        <div class="win-message">
+          <h3>Level Complete! 🎉</h3>
+          <p>Congratulations! You've completed the ${levelName} level!</p>
+          <div class="win-stats">
+            <p>Time: ${timeTaken}</p>
+            <p>Moves: ${gameState.moves}</p>
+            <p>Score: ${score}</p>
+          </div>
+          <button id="playAgainBtn" class="play-again-btn">
+            Play Again
+          </button>
+        </div>
+      `;
+      
+      // Add some styles for the win message
+      const style = document.createElement('style');
+      style.textContent = `
+        .win-message {
+          text-align: center;
+          padding: 20px;
+        }
+        .win-message h3 {
+          color: #2E7D32;
+          margin-bottom: 15px;
+          font-size: 1.8rem;
+        }
+        .win-stats {
+          background: rgba(255,255,255,0.9);
+          border-radius: 10px;
+          padding: 15px;
+          margin: 15px 0;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .win-stats p {
+          margin: 8px 0;
+          font-size: 1.1rem;
+        }
+        .play-again-btn {
+          margin-top: 15px;
+          padding: 12px 30px;
+          background: #4CAF50;
+          color: white;
+          border: none;
+          border-radius: 25px;
+          font-size: 1.1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .play-again-btn:hover {
+          background: #43A047;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        .play-again-btn:active {
+          transform: translateY(1px);
+        }
+      `;
+      document.head.appendChild(style);
+
+    // Add event listener to play again button
+    document.getElementById('playAgainBtn').addEventListener('click', () => {
+    startGame(gameState.totalPairs);
+    });
+    }
+
+    // Calculate score based on time and moves
+    function calculateScore() {
+    const timeBonus = Math.max(0, 1000 - (gameState.timer * 2));
+    const movesBonus = Math.max(0, 500 - (gameState.moves * 5));
+    return timeBonus + movesBonus;
+    }
+
+    // Format time as MM:SS
+    function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    // Utility function to shuffle an array
+    function shuffleArray(array) {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+    }
+
+    // Initialize the game when the page loads
+    document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+    </body>
+    </html>

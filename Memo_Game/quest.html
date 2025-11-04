@@ -219,6 +219,66 @@
     margin: 0;
   }
 
+  /* Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background: linear-gradient(145deg, #ffd4a3, #dfb18f);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 80%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: modalAppear 0.3s ease-out;
+  }
+
+  @keyframes modalAppear {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .modal h2 {
+    color: #7a3b0d;
+    margin-bottom: 15px;
+    font-size: 24px;
+  }
+
+  .modal-stars {
+    margin: 15px 0;
+    font-size: 30px;
+    color: #f6c440;
+    text-shadow: 0 2px 3px rgba(0,0,0,0.3);
+  }
+
+  .modal-button {
+    background: linear-gradient(145deg, #7a3b0d, #5d2a00);
+    color: #f6c440;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s;
+    box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .modal-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+
   .close-game {
     background: #7a3b0d;
     color: white;
@@ -241,18 +301,23 @@
   }
 
   .card {
-    aspect-ratio: 1;
+    /* aspect-ratio: 1;
     perspective: 1000px;
+    cursor: pointer; */
+    aspect-ratio: 1;
+    perspective: 1000px; /* adds 3D depth */
     cursor: pointer;
+    transition: transform 0.3s;
   }
 
   .card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s ease-in-out;
+  transform-style: preserve-3d;
+  /* transform-origin: center; */
   }
 
   .card.flipped .card-inner {
@@ -260,6 +325,17 @@
   }
 
   .card-front, .card-back {
+    /* position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); */
     position: absolute;
     width: 100%;
     height: 100%;
@@ -270,23 +346,26 @@
     justify-content: center;
     font-size: 2rem;
     font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    transform: rotateY(0deg);
   }
 
   .card-front {
+    transform: rotateY(0deg);
     background: linear-gradient(145deg, #7a3b0d, #5d2a00);
     color: #f6c440;
   }
 
   .card-back {
+    transform: rotateY(180deg);
     background: white;
     color: #5d2a00;
-    transform: rotateY(180deg);
   }
 
   .card.matched {
-    visibility: hidden;
+    visibility: visible;
     pointer-events: none;
+    opacity: 0.6;
   }
 
   .game-stats {
@@ -587,7 +666,7 @@
   // Flip a card
   function flipCard(index) {
     const card = gameState.cards[index];
-    
+    // card.classList.add('flipped');
     // Don't allow flipping if the card is already flipped, matched, or if we're waiting
     if (card.isFlipped || card.isMatched || !gameState.canFlip || gameState.flippedCards.length >= 2) {
       return;
@@ -621,10 +700,7 @@
       if (gameState.matchedPairs === gameState.totalPairs) {
         setTimeout(() => {
           const starsEarned = calculateStarsEarned();
-          alert(`Level Complete! You earned ${starsEarned} star(s)!`);
-          updateLevelStars(starsEarned);
-          gameContainer.style.display = 'none';
-          renderLevels();
+          showModal(starsEarned);
         }, 500);
       }
       
@@ -702,6 +778,49 @@
       totalPairs: 8
     };
   }
+
+  // Modal elements
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h2>Level Complete!</h2>
+      <div class="modal-message">You earned <span class="stars-count">0</span> star(s)!</div>
+      <div class="modal-stars"></div>
+      <button class="modal-button">Continue</button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  // Modal functionality
+  const showModal = (stars) => {
+    const starsElement = modal.querySelector('.modal-stars');
+    const starsCountElement = modal.querySelector('.stars-count');
+    
+    starsCountElement.textContent = stars;
+    starsElement.innerHTML = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    
+    modal.style.display = 'flex';
+    
+    // Close modal when clicking the button
+    const closeButton = modal.querySelector('.modal-button');
+    closeButton.onclick = () => {
+      modal.style.display = 'none';
+      updateLevelStars(stars);
+      gameContainer.style.display = 'none';
+      renderLevels();
+    };
+  };
+
+  // Close modal when clicking outside the content
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+      updateLevelStars(parseInt(modal.querySelector('.stars-count').textContent));
+      gameContainer.style.display = 'none';
+      renderLevels();
+    }
+  });
 
   // Load saved progress when the page loads
   window.addEventListener('load', () => {

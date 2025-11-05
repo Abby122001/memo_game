@@ -179,7 +179,7 @@
 
   /* Flip Card Game Styles */
   .game-container {
-    position: fixed;
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
@@ -189,6 +189,7 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
+
   }
 
   .game-board {
@@ -197,10 +198,13 @@
     padding: 20px;
     width: 90%;
     max-width: 800px;
-    max-height: 90vh;
+    max-height: 85vh;
     overflow-y: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    position: relative;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
   .game-header {
@@ -404,7 +408,6 @@
   </div>
 </div>
 
-<!-- Game Container -->
 <div class="game-container" id="gameContainer">
   <div class="game-board">
     <div class="game-header">
@@ -414,10 +417,11 @@
     <div class="game-category" id="gameCategory">Category: Animals</div>
     <div class="game-stats">
       <div>Moves: <span id="moves">0</span></div>
-      <div>Pairs Found: <span id="pairsFound">0</span>/<span id="totalPairs">8</span></div>
+      <div>Time: <span id="timer">00:00</span></div>
+      <div>Pairs: <span id="pairsFound">0</span>/<span id="totalPairs">8</span></div>
     </div>
     <div class="cards-grid" id="cardsGrid">
-      <!-- Cards will be generated here -->
+   
     </div>
   </div>
 </div>
@@ -581,15 +585,19 @@
 
   renderLevels();
 
-  // Game variables
+  // Game state
   let gameState = {
-    cards: [],
     flippedCards: [],
     matchedPairs: 0,
     moves: 0,
     canFlip: true,
-    currentCategory: '',
-    totalPairs: 8 // Default number of pairs
+    gameStarted: false,
+    currentLevel: 1,
+    totalPairs: 8,
+    timer: null,
+    timeLeft: 0,
+    timeLimit: 0,
+    timerInterval: null
   };
 
   // DOM elements
@@ -609,24 +617,106 @@
 
   // Start a new game
   function startGame(level) {
-    resetGame();
+    gameState.currentLevel = level;
+    gameState.matchedPairs = 0;
+    gameState.moves = 0;
+    gameState.flippedCards = [];
+    gameState.canFlip = true;
+    gameState.gameStarted = true;
     
-    // Set difficulty based on level
-    const difficulty = Math.min(4 + Math.floor(level / 3), 8); // Increase pairs as levels progress
-    gameState.totalPairs = difficulty;
-    totalPairsDisplay.textContent = difficulty;
+    // Set number of pairs based on level (4-12 pairs)
+    gameState.totalPairs = Math.min(4 + Math.floor(level / 2), 12);
+    document.getElementById('totalPairs').textContent = gameState.totalPairs;
+    document.getElementById('pairsFound').textContent = '0';
+    document.getElementById('moves').textContent = '0';
     
-    // Select a random category
+    // Hide level selection and show game board
+    document.querySelector('.level-select-container').style.display = 'none';
+    document.getElementById('gameContainer').style.display = 'block';
+    
+    // Set category based on level (cycles through categories)
     const categoryNames = Object.keys(categories);
-    gameState.currentCategory = categoryNames[Math.floor(Math.random() * categoryNames.length)];
-    gameCategoryDisplay.textContent = `Category: ${gameState.currentCategory.charAt(0).toUpperCase() + gameState.currentCategory.slice(1)}`;
+    const categoryName = categoryNames[(level - 1) % categoryNames.length];
+    document.getElementById('gameCategory').textContent = `Category: ${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)}`;
     
-    // Create cards
-    const categoryItems = [...categories[gameState.currentCategory]];
-    const selectedItems = categoryItems.sort(() => 0.5 - Math.random()).slice(0, difficulty);
+    // Set time limit based on level (in seconds)
+    // Levels 1-14: 30-90 seconds, Levels 15+: 1-3 minutes
+    if (level < 15) {
+      gameState.timeLimit = 30 + (level * 4); // 30s for level 1, up to 86s for level 14
+    } else {
+      gameState.timeLimit = (1 + Math.floor((level - 15) / 2)) * 60; // 1-3 minutes for levels 15-20
+    }
+    
+    // Reset timer display
+    updateTimerDisplay();
+    
+    // Clear any existing timer
+    if (gameState.timerInterval) {
+      clearInterval(gameState.timerInterval);
+    }
+    
+    // Start the game timer
+    gameState.timeLeft = gameState.timeLimit;
+    startTimer();
+    
+    // Render cards
+    renderCards();
+  }
+  
+  function updateTimerDisplay() {
+    const minutes = Math.floor(gameState.timeLeft / 60);
+    const seconds = gameState.timeLeft % 60;
+    const timerElement = document.getElementById('timer');
+    
+    // Format as MM:SS
+    timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Change color to red when 10 seconds or less remain
+    if (gameState.timeLeft <= 10) {
+      timerElement.style.color = '#ff4d4d';
+      timerElement.style.fontWeight = 'bold';
+    } else {
+      timerElement.style.color = '';
+      timerElement.style.fontWeight = '';
+    }
+  }
+  
+  function startTimer() {
+    // Clear any existing timer
+    if (gameState.timerInterval) {
+      clearInterval(gameState.timerInterval);
+    }
+    
+    // Update timer immediately
+    updateTimerDisplay();
+    
+    // Start the countdown
+    gameState.timerInterval = setInterval(() => {
+      gameState.timeLeft--;
+      updateTimerDisplay();
+      
+      // Check if time's up
+      if (gameState.timeLeft <= 0) {
+        clearInterval(gameState.timerInterval);
+        endGame(false); // Game over - time's up
+      }
+    }, 1000);
+  }
+
+  // Render cards on the board
+  function renderCards() {
+    cardsGrid.innerHTML = '';
+    
+    // Get category names and select the appropriate category based on level
+    const categoryNames = Object.keys(categories);
+    const categoryName = categoryNames[(gameState.currentLevel - 1) % categoryNames.length];
+    const categoryItems = categories[categoryName];
+    
+    // Select random items from the category
+    const selectedItems = [...categoryItems].sort(() => 0.5 - Math.random()).slice(0, gameState.totalPairs);
     
     // Duplicate items to create pairs
-    gameState.cards = [...selectedItems, ...selectedItems]
+    const cards = [...selectedItems, ...selectedItems]
       .sort(() => Math.random() - 0.5)
       .map((emoji, index) => ({
         id: index,
@@ -635,14 +725,7 @@
         isMatched: false
       }));
     
-    renderCards();
-    gameContainer.style.display = 'flex';
-  }
-
-  // Render cards on the board
-  function renderCards() {
-    cardsGrid.innerHTML = '';
-    gameState.cards.forEach((card, index) => {
+    cards.forEach((card, index) => {
       const cardElement = document.createElement('div');
       cardElement.className = `card ${card.isFlipped ? 'flipped' : ''} ${card.isMatched ? 'matched' : ''}`;
       cardElement.dataset.index = index;
@@ -665,17 +748,15 @@
 
   // Flip a card
   function flipCard(index) {
-    const card = gameState.cards[index];
-    // card.classList.add('flipped');
+    const card = document.querySelector(`.card[data-index='${index}']`);
     // Don't allow flipping if the card is already flipped, matched, or if we're waiting
-    if (card.isFlipped || card.isMatched || !gameState.canFlip || gameState.flippedCards.length >= 2) {
+    if (card.classList.contains('flipped') || card.classList.contains('matched') || !gameState.canFlip || gameState.flippedCards.length >= 2) {
       return;
     }
     
     // Flip the card
-    card.isFlipped = true;
+    card.classList.add('flipped');
     gameState.flippedCards.push(index);
-    renderCards();
     
     // Check for a match if two cards are flipped
     if (gameState.flippedCards.length === 2) {
@@ -685,39 +766,59 @@
   }
 
   // Check if the flipped cards match
+  function endGame(isWin) {
+    // Clear the timer
+    if (gameState.timerInterval) {
+      clearInterval(gameState.timerInterval);
+      gameState.timerInterval = null;
+    }
+    
+    if (isWin) {
+      const starsEarned = calculateStarsEarned();
+      updateLevelStars(starsEarned);
+      saveGameProgress();
+      showModal(starsEarned);
+    } else {
+      // Game over - time's up
+      alert('Time\'s up! Game Over.');
+      resetGame();
+    }
+  }
+
   function checkForMatch() {
     const [firstIndex, secondIndex] = gameState.flippedCards;
-    const firstCard = gameState.cards[firstIndex];
-    const secondCard = gameState.cards[secondIndex];
+    const firstCard = document.querySelector(`.card[data-index='${firstIndex}']`);
+    const secondCard = document.querySelector(`.card[data-index='${secondIndex}']`);
     
-    if (firstCard.emoji === secondCard.emoji) {
+    // Get the emoji from the card's back face
+    const firstEmoji = firstCard.querySelector('.card-back').textContent;
+    const secondEmoji = secondCard.querySelector('.card-back').textContent;
+    
+    if (firstEmoji === secondEmoji) {
       // Match found
-      firstCard.isMatched = true;
-      secondCard.isMatched = true;
+      firstCard.classList.add('matched');
+      secondCard.classList.add('matched');
       gameState.matchedPairs++;
+      document.getElementById('pairsFound').textContent = gameState.matchedPairs;
       
-      // Check for win
+      // Check if game is won
       if (gameState.matchedPairs === gameState.totalPairs) {
         setTimeout(() => {
-          const starsEarned = calculateStarsEarned();
-          showModal(starsEarned);
+          endGame(true); // Game won
         }, 500);
       }
-      
-      resetFlippedCards();
     } else {
-      // No match, flip cards back after a delay
+      // No match - flip cards back after a delay
       gameState.canFlip = false;
       setTimeout(() => {
-        firstCard.isFlipped = false;
-        secondCard.isFlipped = false;
-        resetFlippedCards();
+        firstCard.classList.remove('flipped');
+        secondCard.classList.remove('flipped');
+        secondCard.classList.remove('flipped');
         gameState.canFlip = true;
-        renderCards();
       }, 1000);
     }
     
-    renderCards();
+    gameState.flippedCards = [];
   }
 
   // Calculate stars earned based on performance

@@ -248,9 +248,8 @@ background: linear-gradient(145deg, #ffd4a3, #dfb18f);
 border-radius: 20px;
 padding: 20px;
 width: 90%;
-max-width: 800px;
-max-height: 85vh;
-overflow-y: auto;
+max-width: 400px;
+max-height: 90vh;
 box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 position: fixed;
 top: 50%;
@@ -975,8 +974,8 @@ pairsFoundDisplay.textContent = gameState.matchedPairs;
 // Flip a card
 function flipCard(index) {
 const card = document.querySelector(`.card[data-index='${index}']`);
-// Don't allow flipping if the card is already flipped, matched, or if we're waiting
-if (card.classList.contains('flipped') || card.classList.contains('matched') || !gameState.canFlip || gameState.flippedCards.length >= 2) {
+// Don't allow flipping if the game hasn't started, the card is already flipped, matched, or if we're waiting
+if (!gameState.gameStarted || card.classList.contains('flipped') || card.classList.contains('matched') || !gameState.canFlip || gameState.flippedCards.length >= 2) {
   return;
 }
 

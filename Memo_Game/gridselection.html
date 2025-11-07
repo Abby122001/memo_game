@@ -83,7 +83,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid #b49067;
-            box-shadow: 
+            box-shadow:
                 inset 2px 2px 8px #b49067,
                 inset -2px -2px 8px #ffd9b9,
                 4px 4px 10px rgba(0,0,0,0.2);
@@ -113,6 +113,9 @@
             font-size: 1.1em;
         }
 
+        p{
+            color: #5d2a00;
+        }
         .difficulty-label {
             display: inline-block;
             padding: 5px 15px;
@@ -156,7 +159,7 @@
             <h2>Choose your challenge level</h2>
             <div class="grid-sizes">
                 <!-- 2x3 Grid (6 cards) -->
-                <div class="grid-option" data-rows="2" data-cols="3">
+                <div class="grid-option" data-rows="2" data-difficulty="easy" data-cols="3">
                     <i class="fas" id="icon-2x3"></i>
                     <h3>2 × 3</h3>
                     <p><span class="card-count">6 cards</span></p>
@@ -165,7 +168,7 @@
                 </div>
 
                 <!-- 3x4 Grid (12 cards) -->
-                <div class="grid-option" data-rows="3" data-cols="4">
+                <div class="grid-option" data-rows="3" data-difficulty="medium" data-cols="4">
                     <i class="fas" id="icon-3x4"></i>
                     <h3>3 × 4</h3>
                     <p><span class="card-count">12 cards</span></p>
@@ -174,7 +177,7 @@
                 </div>
 
                 <!-- 4x5 Grid (20 cards) -->
-                <div class="grid-option" data-rows="4" data-cols="5">
+                <div class="grid-option" data-rows="4" data-difficulty="hard" data-cols="5">
                     <i class="fas" id="icon-4x5"></i>
                     <h3>4 × 5</h3>
                     <p><span class="card-count">20 cards</span></p>
@@ -183,7 +186,7 @@
                 </div>
 
                 <!-- 5x6 Grid (30 cards) -->
-                <div class="grid-option" data-rows="5" data-cols="6">
+                <div class="grid-option" data-rows="5" data-difficulty="expert" data-cols="6">
                     <i class="fas" id="icon-5x6"></i>
                     <h3>5 × 6</h3>
                     <p><span class="card-count">30 cards</span></p>
@@ -192,7 +195,7 @@
                 </div>
 
                 <!-- 7x8 Grid (56 cards) -->
-                <div class="grid-option" data-rows="7" data-cols="8">
+                <div class="grid-option" data-rows="7" data-difficulty="extreme" data-cols="8">
                     <i class="fas" id="icon-7x8"></i>
                     <h3>7 × 8</h3>
                     <p><span class="card-count">56 cards</span></p>
@@ -237,6 +240,7 @@
                     // Store the selected options in localStorage
                     localStorage.setItem('gameSettings', JSON.stringify({
                         category: category,
+                        difficulty: this.getAttribute('data-difficulty'),
                         grid: {
                             rows: parseInt(rows),
                             cols: parseInt(cols),

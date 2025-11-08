@@ -6,207 +6,236 @@
 <title>Memory Matching Game</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-/* Instructions Modal */
-.instructions-modal {
-    display: flex;
+.floating-cards {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+    gap: 50px;
+}
+
+.floating-card {
+    position: absolute;
+    width: 100px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    opacity: 0.9;
+    animation: float 15s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-50px) rotate(5deg); }
+}
+/* Instructions Modal */
+.instructions-modal {
+display: flex;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+justify-content: center;
+align-items: center;
+z-index: 1000;
 }
 
 .instructions-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+background: white;
+padding: 30px;
+border-radius: 15px;
+max-width: 500px;
+width: 90%;
+text-align: center;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    width: 100%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 15px;
+width: 100%;
 }
 
 .instructions-content h2 {
-    color: #5d2a00;
-    margin: 0;
+color: #5d2a00;
+margin: 0;
 }
 
 .close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #5d2a00;
-    padding: 5px 10px;
-    border-radius: 50%;
-    transition: all 0.3s;
+background: none;
+border: none;
+font-size: 1.5rem;
+cursor: pointer;
+color: #5d2a00;
+padding: 5px 10px;
+border-radius: 50%;
+transition: all 0.3s;
 }
 
 .close-btn:hover {
-    background-color: #f0f0f0;
-    transform: rotate(90deg);
+background-color: #f0f0f0;
+transform: rotate(90deg);
 }
 
 .instructions-content p {
-    margin: 10px 0;
-    line-height: 1.5;
-    color: #333;
+margin: 10px 0;
+line-height: 1.5;
+color: #333;
 }
 
 .start-btn {
-    background: #5d2a00;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-size: 1.1em;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: all 0.3s;
+background: #5d2a00;
+color: white;
+border: none;
+padding: 12px 30px;
+border-radius: 25px;
+font-size: 1.1em;
+cursor: pointer;
+margin-top: 20px;
+transition: all 0.3s;
 }
 
 .start-btn:hover {
-    background: #7a3b0d;
-    transform: scale(1.05);
+background: #7a3b0d;
+transform: scale(1.05);
 }
 
 /* Time Up Modal */
 .timeup-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+justify-content: center;
+align-items: center;
+z-index: 1000;
 }
 
 .timeup-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+background: white;
+padding: 30px;
+border-radius: 15px;
+max-width: 500px;
+width: 90%;
+text-align: center;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .timeup-content h2 {
-    color: #5d2a00;
-    margin-bottom: 15px;
+color: #5d2a00;
+margin-bottom: 15px;
 }
 
 .timeup-content p {
-    margin: 15px 0 25px;
-    font-size: 1.1em;
-    color: #333;
+margin: 15px 0 25px;
+font-size: 1.1em;
+color: #333;
 }
 
 .timeup-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
+display: flex;
+justify-content: center;
+gap: 15px;
+margin-top: 20px;
 }
 
 .timeup-btn {
-    padding: 10px 25px;
-    border: none;
-    border-radius: 25px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: all 0.3s;
+padding: 10px 25px;
+border: none;
+border-radius: 25px;
+font-size: 1em;
+cursor: pointer;
+transition: all 0.3s;
 }
 
 #retry-btn {
-    background: #5d2a00;
-    color: white;
+background: #5d2a00;
+color: white;
 }
 
 #return-btn {
-    background: #f0f0f0;
-    color: #333;
+background: #f0f0f0;
+color: #333;
 }
 
 .timeup-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+transform: scale(1.05);
+box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Completion Modal */
 .completion-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.8);
+justify-content: center;
+align-items: center;
+z-index: 1000;
 }
 
 .completion-content {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    max-width: 500px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+background: white;
+padding: 30px;
+border-radius: 15px;
+max-width: 500px;
+width: 90%;
+text-align: center;
+box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .completion-content h1 {
-    color:#5d2a00; 
-    margin-bottom: 5px;
+color:#5d2a00; 
+margin-bottom: 5px;
 }
 
 .completion-content h2 {
-    color: #50733f;
-    margin-bottom: 5px;
+color: #50733f;
+margin-bottom: 5px;
 }
 
 .completion-content p {
-    margin: 5px 0 5px;
-    color: #333;
+margin: 5px 0 5px;
+color: #333;
 }
 
 .stats {
-    margin: 20px 0;
-    font-size: 1.2em;
+margin: 20px 0;
+font-size: 1.2em;
 }
 
 .next-btn {
-    background: #5d2a00;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-size: 1.1em;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: all 0.3s;
+background: #5d2a00;
+color: white;
+border: none;
+padding: 12px 30px;
+border-radius: 25px;
+font-size: 1.1em;
+cursor: pointer;
+margin-top: 20px;
+transition: all 0.3s;
 }
 
 .next-btn:hover {
-    background: #7a3b0d;
-    transform: scale(1.05);
+background: #7a3b0d;
+transform: scale(1.05);
 }
 
 * {
@@ -331,15 +360,7 @@ transition: transform 0.3s;
 }
 
 .card-inner {
-    /* position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px; */
-    position: relative;
+position: relative;
 width: 100%;
 height: 100%;
 text-align: center;
@@ -348,7 +369,7 @@ transform-style: preserve-3d;
 }
 
 .card.flipped .card-inner {
-    transform: rotateY(180deg);
+transform: rotateY(180deg);
 }
 
 
@@ -368,31 +389,31 @@ transform: rotateY(0deg);
 }
 
 .card-front {
-    background: linear-gradient(145deg, #7a3b0d, #5d2a00);
-    color: #f6c440;
-    transform: rotateY(0deg);
+background: linear-gradient(145deg, #7a3b0d, #5d2a00);
+color: #f6c440;
+transform: rotateY(0deg);
 }
 
 .card-back {
-    background: white;
-    color: #5d2a00;
-    transform: rotateY(180deg);
+background: white;
+color: #5d2a00;
+transform: rotateY(180deg);
 }
 
 .card.matched {
-    position: relative;
+position: relative;
 }
 
 .card.matched::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(54, 52, 51, 0.119);
-    border-radius: 10px;
-    pointer-events: none;
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(54, 52, 51, 0.119);
+border-radius: 10px;
+pointer-events: none;
 }
 
 .card .front {
@@ -403,8 +424,6 @@ transform: rotateY(180deg);
 display: flex;
 justify-content: center;
 margin: 30px 0;
-/* gap: 20px; */
-/* padding: 20px 0; */
 }
 
 .btn {
@@ -447,31 +466,32 @@ transform: scale(1.1);
 
 @media (max-width: 600px) {
 .game-stats {
-    flex-direction: column;
-    gap: 10px;
+flex-direction: column;
+gap: 10px;
 }
 
 .card {
-    font-size: 1.5em;
+font-size: 1.5em;
 }
 }
 </style>
 </head>
 <body>
+<script src="floating-cards.js"></script>
 <div class="game-container-wrapper">
 <div class="game-header">
 <h1>Memory Matching Game</h1>
 <div class="game-stats">
 <div class="stat-box">
-    <div class="stat-value" id="moves">0</div>
-    <div class="stat-label">Moves</div>
+<div class="stat-value" id="moves">0</div>
+<div class="stat-label">Moves</div>
 </div>
 <div class="stat-box">
-    <div class="stat-value" id="timer">0:00</div>
+<div class="stat-value" id="timer">0:00</div>
 </div>
 <div class="stat-box">
-    <div class="stat-value" id="matches">0</div>
-    <div class="stat-label">Matches</div>
+<div class="stat-value" id="matches">0</div>
+<div class="stat-label">Matches</div>
 </div>
 </div>
 </div>
@@ -507,9 +527,9 @@ let timeUpModal = null; // Time Up modal element
 
 // Get game settings from localStorage
 const gameSettings = JSON.parse(localStorage.getItem('gameSettings')) || {
-    category: 'icons',
-    grid: { rows: 4, cols: 3 },
-    difficulty: 'medium' // Default to medium difficulty
+category: 'icons',
+grid: { rows: 4, cols: 3 },
+difficulty: 'medium' // Default to medium difficulty
 };
 
 // Use destructuring with a different variable name to avoid redeclaration
@@ -519,11 +539,11 @@ difficulty = gameDifficulty || 'medium';
 
 // Difficulty settings with time limits in seconds
 const DIFFICULTY_LEVELS = {
-    'easy': { timeLimit: 15, label: 'Easy' },
-    'medium': { timeLimit: 30, label: 'Medium' },
-    'hard': { timeLimit: 60, label: 'Hard' },
-    'expert': { timeLimit: 90, label: 'Expert' },
-    'extreme': { timeLimit: 120, label: 'Extreme' }
+'easy': { timeLimit: 15, label: 'Easy' },
+'medium': { timeLimit: 30, label: 'Medium' },
+'hard': { timeLimit: 60, label: 'Hard' },
+'expert': { timeLimit: 90, label: 'Expert' },
+'extreme': { timeLimit: 120, label: 'Extreme' }
 };
 const totalPairs = (gridSize.rows * gridSize.cols) / 2;
 
@@ -542,507 +562,507 @@ setTimeout(showInstructions, 500); // Small delay to ensure DOM is ready
 
 // Event listeners
 restartBtn.addEventListener('click', function() {
-    const restartIcon = document.getElementById('restartIcon');
-    // Add loading class and disable button
-    restartIcon.className = 'fas fa-spinner fa-spin';
-    restartBtn.disabled = true;
-    
-    // Small delay to show the loading state
-    setTimeout(() => {
-        initGame();
-        // Restore the icon and re-enable button after game restarts
-        restartIcon.className = 'fas fa-redo';
-        restartBtn.disabled = false;
-    }, 500); // 500ms delay to show loading state
+const restartIcon = document.getElementById('restartIcon');
+// Add loading class and disable button
+restartIcon.className = 'fas fa-spinner fa-spin';
+restartBtn.disabled = true;
+
+// Small delay to show the loading state
+setTimeout(() => {
+    initGame();
+    // Restore the icon and re-enable button after game restarts
+    restartIcon.className = 'fas fa-redo';
+    restartBtn.disabled = false;
+}, 500); // 500ms delay to show loading state
 });
 backBtn.addEventListener('click', () => {
-    window.location.href = 'gridselection.html';
+window.location.href = 'gridselection.html';
 });
 
 function initGame() {
-    // Remove any existing completion modal
-    const existingModal = document.querySelector('.completion-modal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    // Reset game state
-    cards = [];
-    hasFlippedCard = false;
-    lockBoard = false;
-    firstCard = null;
-    secondCard = null;
-    moves = 0;
-    matches = 0;
-    seconds = 0;
-    gameStarted = false;
-    
-    // Clear the board
-    gameBoard.innerHTML = '';
-    
-    // Update UI
-    updateMoves();
-    updateMatches();
-    updateTimer();
-    
-    // Clear existing timer
-    if (timer) {
-        clearInterval(timer);
-        timer = null;
-    }
-    
-    // Set up the game board
-    setupBoard();
-    
-    // Initially disable card clicks until game starts
-    setTimeout(() => {
-        const allCards = document.querySelectorAll('.card');
-        allCards.forEach(card => {
-            card.style.pointerEvents = 'none';
-            // Ensure cards are not flipped
-            card.classList.remove('flipped');
-            card.classList.remove('matched');
-        });
-    }, 100);
+// Remove any existing completion modal
+const existingModal = document.querySelector('.completion-modal');
+if (existingModal) {
+    existingModal.remove();
 }
 
-function setupBoard() {
-    // Set the grid template based on the selected size
-    gameBoard.style.gridTemplateColumns = `repeat(${gridSize.cols}, 1fr)`;
-    
-    // Create an array of card values (pairs of numbers)
-    const cardValues = [];
-    for (let i = 1; i <= totalPairs; i++) {
-        cardValues.push(i, i);
-    }
-    
-    // Shuffle the cards
-    const shuffledCards = shuffleArray(cardValues);
-    
-    // Create card elements
-    shuffledCards.forEach((value, index) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.dataset.value = value;
-        
-        // Create card inner container
-        const cardInner = document.createElement('div');
-        cardInner.className = 'card-inner';
-        
-        // Create card faces
-        const front = document.createElement('div');
-        front.className = 'card-front';
-        front.innerHTML = '?'; // Question mark on the front of the card
-        
-        const back = document.createElement('div');
-        back.className = 'card-back';
-        back.innerHTML = `<i class="fas fa-${getIconForValue(value, category)}" style="font-size: 4.5rem;"></i>`;
-        
-        // Append faces to inner container
-        cardInner.appendChild(front);
-        cardInner.appendChild(back);
-        
-        // Append inner container to card
-        card.appendChild(cardInner);
-        
-        card.addEventListener('click', flipCard);
-        
-        gameBoard.appendChild(card);
-        cards.push(card);
-    });
+// Reset game state
+cards = [];
+hasFlippedCard = false;
+lockBoard = false;
+firstCard = null;
+secondCard = null;
+moves = 0;
+matches = 0;
+seconds = 0;
+gameStarted = false;
+
+// Clear the board
+gameBoard.innerHTML = '';
+
+// Update UI
+updateMoves();
+updateMatches();
+updateTimer();
+
+// Clear existing timer
+if (timer) {
+    clearInterval(timer);
+    timer = null;
 }
 
-function startGame() {
-    // Hide the modal
-    const modal = document.querySelector('.instructions-modal');
-    if (modal) {
-        modal.style.display = 'none';
-    }
-    
-    // Set game as started
-    gameStarted = true;
-    document.body.style.overflow = 'auto';
-    
-    // Reset game stats
-    moves = 0;
-    matches = 0;
-    seconds = 0;
-    
-    // Set time limit based on difficulty
-    const difficultySettings = DIFFICULTY_LEVELS[difficulty];
-    timeLimit = difficultySettings.timeLimit;
+// Set up the game board
+setupBoard();
 
-    // Update difficulty display if it exists
-    const difficultyDisplay = document.getElementById('difficulty-display');
-    if (difficultyDisplay) {
-        difficultyDisplay.textContent = `Difficulty: ${difficultySettings.label}`;
-    }
-    
-    // Ensure all cards are visible and interactive
-    const cardsToShow = document.querySelectorAll('.card');
-    cardsToShow.forEach(card => {
-        card.style.visibility = 'visible';
-        card.style.opacity = '1';
-        card.style.pointerEvents = 'auto';
+// Initially disable card clicks until game starts
+setTimeout(() => {
+    const allCards = document.querySelectorAll('.card');
+    allCards.forEach(card => {
+        card.style.pointerEvents = 'none';
+        // Ensure cards are not flipped
         card.classList.remove('flipped');
         card.classList.remove('matched');
     });
+}, 100);
+}
+
+function setupBoard() {
+// Set the grid template based on the selected size
+gameBoard.style.gridTemplateColumns = `repeat(${gridSize.cols}, 1fr)`;
+
+// Create an array of card values (pairs of numbers)
+const cardValues = [];
+for (let i = 1; i <= totalPairs; i++) {
+    cardValues.push(i, i);
+}
+
+// Shuffle the cards
+const shuffledCards = shuffleArray(cardValues);
+
+// Create card elements
+shuffledCards.forEach((value, index) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.dataset.value = value;
     
-    // Initialize time-up modal if it doesn't exist
-    if (!document.querySelector('.timeup-modal')) {
-        timeUpModal = document.createElement('div');
-        timeUpModal.className = 'timeup-modal';
-        timeUpModal.innerHTML = `
-            <div class="timeup-content">
-                <h2>Time's Up!</h2>
-                <p>Sorry, you've run out of time! Would you like to try again?</p>
-                <div class="timeup-buttons">
-                    <button id="retry-btn" class="timeup-btn">Retry</button>
-                    <button id="return-btn" class="timeup-btn">Return to Menu</button>
-                </div>
+    // Create card inner container
+    const cardInner = document.createElement('div');
+    cardInner.className = 'card-inner';
+    
+    // Create card faces
+    const front = document.createElement('div');
+    front.className = 'card-front';
+    front.innerHTML = '?'; // Question mark on the front of the card
+    
+    const back = document.createElement('div');
+    back.className = 'card-back';
+    back.innerHTML = `<i class="fas fa-${getIconForValue(value, category)}" style="font-size: 4.5rem;"></i>`;
+    
+    // Append faces to inner container
+    cardInner.appendChild(front);
+    cardInner.appendChild(back);
+    
+    // Append inner container to card
+    card.appendChild(cardInner);
+    
+    card.addEventListener('click', flipCard);
+    
+    gameBoard.appendChild(card);
+    cards.push(card);
+});
+}
+
+function startGame() {
+// Hide the modal
+const modal = document.querySelector('.instructions-modal');
+if (modal) {
+    modal.style.display = 'none';
+}
+
+// Set game as started
+gameStarted = true;
+document.body.style.overflow = 'auto';
+
+// Reset game stats
+moves = 0;
+matches = 0;
+seconds = 0;
+
+// Set time limit based on difficulty
+const difficultySettings = DIFFICULTY_LEVELS[difficulty];
+timeLimit = difficultySettings.timeLimit;
+
+// Update difficulty display if it exists
+const difficultyDisplay = document.getElementById('difficulty-display');
+if (difficultyDisplay) {
+    difficultyDisplay.textContent = `Difficulty: ${difficultySettings.label}`;
+}
+
+// Ensure all cards are visible and interactive
+const cardsToShow = document.querySelectorAll('.card');
+cardsToShow.forEach(card => {
+    card.style.visibility = 'visible';
+    card.style.opacity = '1';
+    card.style.pointerEvents = 'auto';
+    card.classList.remove('flipped');
+    card.classList.remove('matched');
+});
+
+// Initialize time-up modal if it doesn't exist
+if (!document.querySelector('.timeup-modal')) {
+    timeUpModal = document.createElement('div');
+    timeUpModal.className = 'timeup-modal';
+    timeUpModal.innerHTML = `
+        <div class="timeup-content">
+            <h2>Time's Up!</h2>
+            <p>Sorry, you've run out of time! Would you like to try again?</p>
+            <div class="timeup-buttons">
+                <button id="retry-btn" class="timeup-btn">Retry</button>
+                <button id="return-btn" class="timeup-btn">Return to Menu</button>
             </div>
-        `;
-        document.body.appendChild(timeUpModal);
-        
-        // Add event listeners for the time-up modal buttons
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.id === 'retry-btn') {
-                timeUpModal.style.display = 'none';
-                resetBoard();
-                startGame();
-            } else if (e.target && e.target.id === 'return-btn') {
-                window.location.href = 'gridselection.html';
-            }
-        });
-    }
+        </div>
+    `;
+    document.body.appendChild(timeUpModal);
     
-    updateMoves();
-    updateMatches();
-    updateTimer();
-    
-    // Clear any existing timer
-    if (timer) {
-        clearInterval(timer);
-        timer = null;
-    }
-    
-    // Reset the board state
-    resetBoard();
-    
-    // Make sure cards are visible and interactive
-    const gameCards = document.querySelectorAll('.card');
-    gameCards.forEach(card => {
-        card.style.visibility = 'visible';
-        card.style.opacity = '1';
-        card.style.pointerEvents = 'auto';
-        // Ensure cards are face down at start
-        card.classList.remove('flipped');
+    // Add event listeners for the time-up modal buttons
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'retry-btn') {
+            timeUpModal.style.display = 'none';
+            resetBoard();
+            startGame();
+        } else if (e.target && e.target.id === 'return-btn') {
+            window.location.href = 'gridselection.html';
+        }
     });
-    
-    console.log('Game started with time limit:', timeLimit, 'seconds');
+}
+
+updateMoves();
+updateMatches();
+updateTimer();
+
+// Clear any existing timer
+if (timer) {
+    clearInterval(timer);
+    timer = null;
+}
+
+// Reset the board state
+resetBoard();
+
+// Make sure cards are visible and interactive
+const gameCards = document.querySelectorAll('.card');
+gameCards.forEach(card => {
+    card.style.visibility = 'visible';
+    card.style.opacity = '1';
+    card.style.pointerEvents = 'auto';
+    // Ensure cards are face down at start
+    card.classList.remove('flipped');
+});
+
+console.log('Game started with time limit:', timeLimit, 'seconds');
 }
 
 function showInstructions() {
-    // Remove any existing modals first
-    const existingModal = document.querySelector('.instructions-modal');
-    if (existingModal) {
-        existingModal.remove();
-    }
-    
-    const modal = document.createElement('div');
-    modal.className = 'instructions-modal';
-    modal.innerHTML = `
-        <div class="instructions-content">
-            <div class="modal-header">
-                <h2>How to Play</h2>
-                <button class="close-btn" id="closeInstructionsBtn">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <p>Welcome to the Memory Matching Game!</p>
-            <p>• Flip two cards at a time to find matching pairs</p>
-            <p>• Try to find all pairs in the fewest moves possible</p>
-            <p>• The timer starts when you make your first move</p>
-            <p>• Have fun and test your memory!</p>
-            <p>• Time limit is ${DIFFICULTY_LEVELS[difficulty].timeLimit} seconds</p>
-            <button class="start-btn" id="startGameBtn">Start Game</button>
+// Remove any existing modals first
+const existingModal = document.querySelector('.instructions-modal');
+if (existingModal) {
+    existingModal.remove();
+}
+
+const modal = document.createElement('div');
+modal.className = 'instructions-modal';
+modal.innerHTML = `
+    <div class="instructions-content">
+        <div class="modal-header">
+            <h2>How to Play</h2>
+            <button class="close-btn" id="closeInstructionsBtn">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
-    `;
-    document.body.appendChild(modal);
-    document.body.style.overflow = 'hidden';
-    
-    // Add event listener to the start button
-    const startBtn = document.getElementById('startGameBtn');
-    if (startBtn) {
-        startBtn.addEventListener('click', startGame);
-    }
-    
-    // Add event listener to the close button
-    const closeBtn = document.getElementById('closeInstructionsBtn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', function() {
-            window.location.href = 'quick_game.html';
-        });
-    }
+        <p>Welcome to the Memory Matching Game!</p>
+        <p>• Flip two cards at a time to find matching pairs</p>
+        <p>• Try to find all pairs in the fewest moves possible</p>
+        <p>• The timer starts when you make your first move</p>
+        <p>• Have fun and test your memory!</p>
+        <p>• Time limit is ${DIFFICULTY_LEVELS[difficulty].timeLimit} seconds</p>
+        <button class="start-btn" id="startGameBtn">Start Game</button>
+    </div>
+`;
+document.body.appendChild(modal);
+document.body.style.overflow = 'hidden';
+
+// Add event listener to the start button
+const startBtn = document.getElementById('startGameBtn');
+if (startBtn) {
+    startBtn.addEventListener('click', startGame);
+}
+
+// Add event listener to the close button
+const closeBtn = document.getElementById('closeInstructionsBtn');
+if (closeBtn) {
+    closeBtn.addEventListener('click', function() {
+        window.location.href = 'quick_game.html';
+    });
+}
 }
 
 function flipCard() {
-    if (!gameStarted || lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) {
-        return false;
-    }
-    
-    // Start the timer on first card flip if not already started
-    if (moves === 0 && !timer) {
-        timer = setInterval(() => {
-            seconds++;
-            updateTimer();
-        }, 1000);
-    }
-    
-    this.classList.add('flipped');
-    
-    if (!hasFlippedCard) {
-        // First card of a pair
-        // First click
-        hasFlippedCard = true;
-        firstCard = this;
-        
-        // Start the timer on first move
-        if (!gameStarted) {
-            startGame();
-            startTimer();
-            gameStarted = true;
-        }
-        return;
-    }
-    
-    // Second click
-    secondCard = this;
-    
-    // Prevent further clicks while checking for a match
-    lockBoard = true;
-    
-    // Check for match after a short delay to allow the flip animation to complete
-    setTimeout(() => {
-        checkForMatch();
-    }, 600);
-    
-    // Update moves
-    moves++;
-    updateMoves();
+if (!gameStarted || lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) {
+    return false;
 }
 
-function checkForMatch() {
-    const isMatch = firstCard.dataset.value === secondCard.dataset.value;
-    
-    if (isMatch) {
-        // It's a match!
-        firstCard.classList.add('matched');
-        secondCard.classList.add('matched');
-        
-        // Play match sound
-        const matchSound = new Audio('sounds/match.mp3');
-        matchSound.play().catch(e => console.log('Could not play sound:', e));
-        
-        matches++;
-        updateMatches();
-        
-        // Check for win
-        if (matches === totalPairs) {
-            showCompletionScreen();
-        }
-        
-        resetBoard();
-    } else {
-        // No match
-        lockBoard = true;
-        
-        // Play no match sound
-        const noMatchSound = new Audio('sounds/no-match.mp3');
-        noMatchSound.play().catch(e => console.log('Could not play sound:', e));
-        
-        // Flip cards back after a delay
-        setTimeout(() => {
-            firstCard.classList.remove('flipped');
-            secondCard.classList.remove('flipped');
-            resetBoard();
-        }, 1000);
-    }
-}
-
-function resetBoard() {
-    hasFlippedCard = false;
-    lockBoard = false;
-    firstCard = null;
-    secondCard = null;
-    
-    // Don't reset cards here to prevent flickering
-    // This function is now only for resetting the game state, not the UI
-}
-
-function startTimer() {
+// Start the timer on first card flip if not already started
+if (moves === 0 && !timer) {
     timer = setInterval(() => {
         seconds++;
         updateTimer();
     }, 1000);
 }
 
+this.classList.add('flipped');
+
+if (!hasFlippedCard) {
+    // First card of a pair
+    // First click
+    hasFlippedCard = true;
+    firstCard = this;
+    
+    // Start the timer on first move
+    if (!gameStarted) {
+        startGame();
+        startTimer();
+        gameStarted = true;
+    }
+    return;
+}
+
+// Second click
+secondCard = this;
+
+// Prevent further clicks while checking for a match
+lockBoard = true;
+
+// Check for match after a short delay to allow the flip animation to complete
+setTimeout(() => {
+    checkForMatch();
+}, 600);
+
+// Update moves
+moves++;
+updateMoves();
+}
+
+function checkForMatch() {
+const isMatch = firstCard.dataset.value === secondCard.dataset.value;
+
+if (isMatch) {
+    // It's a match!
+    firstCard.classList.add('matched');
+    secondCard.classList.add('matched');
+    
+    // Play match sound
+    const matchSound = new Audio('sounds/match.mp3');
+    matchSound.play().catch(e => console.log('Could not play sound:', e));
+    
+    matches++;
+    updateMatches();
+    
+    // Check for win
+    if (matches === totalPairs) {
+        showCompletionScreen();
+    }
+    
+    resetBoard();
+} else {
+    // No match
+    lockBoard = true;
+    
+    // Play no match sound
+    const noMatchSound = new Audio('sounds/no-match.mp3');
+    noMatchSound.play().catch(e => console.log('Could not play sound:', e));
+    
+    // Flip cards back after a delay
+    setTimeout(() => {
+        firstCard.classList.remove('flipped');
+        secondCard.classList.remove('flipped');
+        resetBoard();
+    }, 1000);
+}
+}
+
+function resetBoard() {
+hasFlippedCard = false;
+lockBoard = false;
+firstCard = null;
+secondCard = null;
+
+// Don't reset cards here to prevent flickering
+// This function is now only for resetting the game state, not the UI
+}
+
+function startTimer() {
+timer = setInterval(() => {
+    seconds++;
+    updateTimer();
+}, 1000);
+}
+
 function updateMoves() {
-    movesDisplay.textContent = moves;
+movesDisplay.textContent = moves;
 }
 
 function updateMatches() {
-    matchesDisplay.textContent = `${matches} / ${totalPairs}`;
+matchesDisplay.textContent = `${matches} / ${totalPairs}`;
 }
 
 // Time Up Modal - already declared at the top
 // Remove this line to prevent redeclaration
 
 function updateTimer() {
-    const timeLeft = timeLimit - seconds;
-    if (timeLeft <= 0) {
-        clearInterval(timer);
-        timer = null;
-        // Ensure the time-up modal exists before trying to show it
-        const modal = document.querySelector('.timeup-modal');
-        if (modal) {
-            modal.style.display = 'flex';
-        }
-        return;
+const timeLeft = timeLimit - seconds;
+if (timeLeft <= 0) {
+    clearInterval(timer);
+    timer = null;
+    // Ensure the time-up modal exists before trying to show it
+    const modal = document.querySelector('.timeup-modal');
+    if (modal) {
+        modal.style.display = 'flex';
     }
-    
-    const minutes = Math.floor(timeLeft / 60);
-    const remainingSeconds = timeLeft % 60;
-    timerDisplay.textContent = `Time: ${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
-    
-    // Change color when time is running low
-    if (timeLeft <= 10) {
-        timerDisplay.style.color = '#ff4444'; // Red color when time is low
-        timerDisplay.style.fontWeight = 'bold';
-    } else {
-        timerDisplay.style.color = '';
-        timerDisplay.style.fontWeight = '';
-    }
+    return;
+}
+
+const minutes = Math.floor(timeLeft / 60);
+const remainingSeconds = timeLeft % 60;
+timerDisplay.textContent = `Time: ${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+
+// Change color when time is running low
+if (timeLeft <= 10) {
+    timerDisplay.style.color = '#ff4444'; // Red color when time is low
+    timerDisplay.style.fontWeight = 'bold';
+} else {
+    timerDisplay.style.color = '';
+    timerDisplay.style.fontWeight = '';
+}
 }
 
 function showCompletionScreen() {
-    clearInterval(timer);
-    
-    // Create or update completion modal
-    let modal = document.querySelector('.completion-modal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.className = 'completion-modal';
-        document.body.appendChild(modal);
-    }
-    
-    // Check if we should show next level button
-    const nextLevel = getNextLevel();
-    const nextButton = nextLevel ? 
-        `<button class="next-btn" id="nextLevelBtn">Back to levels</button>` : 
-        '<p>You\'ve completed all levels!</p>';
-    
-    modal.innerHTML = `
-        <div class="completion-content">
-             <h1>🎉Congratulations! 🎉</h1>
-            <h2>You have completed the ${DIFFICULTY_LEVELS[difficulty].label} Mode</h2>
-            <div class="stats">
-                <p>Time Left: ${formatTime(timeLimit - seconds)}</p>
-                <p>Moves: ${moves}</p>
-                <p>Score: ${calculateScore()}</p>
-            </div>
-            ${nextButton}
+clearInterval(timer);
+
+// Create or update completion modal
+let modal = document.querySelector('.completion-modal');
+if (!modal) {
+    modal = document.createElement('div');
+    modal.className = 'completion-modal';
+    document.body.appendChild(modal);
+}
+
+// Check if we should show next level button
+const nextLevel = getNextLevel();
+const nextButton = nextLevel ? 
+    `<button class="next-btn" id="nextLevelBtn">Back to levels</button>` : 
+    '<p>You\'ve completed all levels!</p>';
+
+modal.innerHTML = `
+    <div class="completion-content">
+            <h1>🎉Congratulations! 🎉</h1>
+        <h2>You have completed the ${DIFFICULTY_LEVELS[difficulty].label} Mode</h2>
+        <div class="stats">
+            <p>Time Left: ${formatTime(timeLimit - seconds)}</p>
+            <p>Moves: ${moves}</p>
+            <p>Score: ${calculateScore()}</p>
         </div>
-    `;
+        ${nextButton}
+    </div>
+`;
 
-    modal.style.display = 'flex';
+modal.style.display = 'flex';
 
-    // Add event listener for next level button
-    const nextLevelBtn = document.getElementById('nextLevelBtn');
-    if (nextLevelBtn) {
-        nextLevelBtn.addEventListener('click', () => {
-            // Redirect to grid selection page
-            window.location.href = 'gridselection.html';
-            modal.remove();
-        });
-    }
+// Add event listener for next level button
+const nextLevelBtn = document.getElementById('nextLevelBtn');
+if (nextLevelBtn) {
+    nextLevelBtn.addEventListener('click', () => {
+        // Redirect to grid selection page
+        window.location.href = 'gridselection.html';
+        modal.remove();
+    });
+}
 }
 
 function getNextLevel() {
-    const currentRows = gridSize.rows;
-    const currentCols = gridSize.cols;
-    
-    // Define level progression (you can customize this)
-    const levels = [
-        { rows: 2, cols: 3 },
-        { rows: 3, cols: 4 },
-        { rows: 4, cols: 4 },
-        { rows: 4, cols: 5 },
-        { rows: 4, cols: 6 }
-    ];
-    
-    const currentIndex = levels.findIndex(level => 
-        level.rows === currentRows && level.cols === currentCols
-    );
-    
-    return levels[currentIndex + 1];
+const currentRows = gridSize.rows;
+const currentCols = gridSize.cols;
+
+// Define level progression (you can customize this)
+const levels = [
+    { rows: 2, cols: 3 },
+    { rows: 3, cols: 4 },
+    { rows: 4, cols: 4 },
+    { rows: 4, cols: 5 },
+    { rows: 4, cols: 6 }
+];
+
+const currentIndex = levels.findIndex(level => 
+    level.rows === currentRows && level.cols === currentCols
+);
+
+return levels[currentIndex + 1];
 }
 
 function formatTime(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+const mins = Math.floor(seconds / 60);
+const secs = seconds % 60;
+return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
 }
 
 function calculateScore() {
-    // Simple scoring system (you can customize this)
-    const timeScore = Math.max(0, 1000 - (seconds * 5));
-    const movesScore = Math.max(0, 500 - (moves * 2));
-    return Math.max(0, timeScore + movesScore);
+// Simple scoring system (you can customize this)
+const timeScore = Math.max(0, 1000 - (seconds * 5));
+const movesScore = Math.max(0, 500 - (moves * 2));
+return Math.max(0, timeScore + movesScore);
 }
 
 // Utility functions
 function shuffleArray(array) {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    return newArray;
+const newArray = [...array];
+for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+}
+return newArray;
 }
 
 function getIconForValue(value, category) {
-    // Define icons for each category
-    const categories = {
-        animals: [
-            'dog', 'cat', 'hippo', 'fish', 'frog', 'horse', 'kiwi-bird', 'otter',
-            'crow', 'dove', 'dragon', 'feather', 'feather-alt', 'frog', 'hippo', 'horse-head',
-            'kiwi-bird', 'otter', 'paw', 'spider', 'dove', 'crow', 'dragon', 'feather',
-            'feather-alt', 'frog', 'hippo', 'horse-head', 'kiwi-bird', 'otter', 'paw', 'spider'
-        ],
-        icons: [
-            'heart', 'star', 'bell', 'gem', 'cloud', 'moon', 'sun', 'key',
-            'anchor', 'bomb', 'bone', 'gift', 'home', 'igloo', 'lemon', 'music',
-            'rocket', 'shapes', 'ship', 'snowman', 'umbrella', 'volleyball-ball', 'yin-yang', 'atom',
-            'bolt', 'camera', 'cookie', 'crown', 'dice', 'diamond', 'drum', 'feather'
-        ],
-        fruits: [
-            'apple-alt', 'lemon', 'pepper-hot', 'carrot', 'leaf', 'seedling', 'pepper-hot', 'carrot',
-            'lemon', 'apple-alt', 'seedling', 'leaf', 'pepper-hot', 'carrot', 'lemon', 'apple-alt',
-            'seedling', 'leaf', 'pepper-hot', 'carrot', 'lemon', 'apple-alt', 'seedling', 'leaf',
-            'pepper-hot', 'carrot', 'lemon', 'apple-alt', 'seedling', 'leaf', 'pepper-hot', 'carrot'
-        ],
-        vehicles: [
-            'car', 'truck', 'truck-monster', 'truck-pickup', 'shuttle-van', 'car-side', 'truck-loading', 'truck-moving',
-            'shipping-fast', 'shuttle-van', 'truck', 'truck-monster', 'truck-pickup', 'shuttle-van', 'car-side', 'truck-loading',
-            'truck-moving', 'shipping-fast', 'shuttle-van', 'truck', 'truck-monster', 'truck-pickup', 'shuttle-van', 'car-side',
-            'truck-loading', 'truck-moving', 'shipping-fast', 'shuttle-van', 'truck', 'truck-monster', 'truck-pickup', 'shuttle-van'
-        ]
-    };
-    
-    // Default to icons if category not found
-    const icons = categories[category] || categories.icons;
-    return icons[(value - 1) % icons.length];
+// Define icons for each category
+const categories = {
+    animals: [
+        'dog', 'cat', 'hippo', 'fish', 'frog', 'horse', 'kiwi-bird', 'otter',
+        'crow', 'dove', 'dragon', 'feather', 'feather-alt', 'frog', 'hippo', 'horse-head',
+        'kiwi-bird', 'otter', 'paw', 'spider', 'dove', 'crow', 'dragon', 'feather',
+        'feather-alt', 'frog', 'hippo', 'horse-head', 'kiwi-bird', 'otter', 'paw', 'spider'
+    ],
+    icons: [
+        'heart', 'star', 'bell', 'gem', 'cloud', 'moon', 'sun', 'key',
+        'anchor', 'bomb', 'bone', 'gift', 'home', 'igloo', 'lemon', 'music',
+        'rocket', 'shapes', 'ship', 'snowman', 'umbrella', 'volleyball-ball', 'yin-yang', 'atom',
+        'bolt', 'camera', 'cookie', 'crown', 'dice', 'diamond', 'drum', 'feather'
+    ],
+    fruits: [
+        'apple-alt', 'lemon', 'pepper-hot', 'carrot', 'leaf', 'seedling', 'pepper-hot', 'carrot',
+        'lemon', 'apple-alt', 'seedling', 'leaf', 'pepper-hot', 'carrot', 'lemon', 'apple-alt',
+        'seedling', 'leaf', 'pepper-hot', 'carrot', 'lemon', 'apple-alt', 'seedling', 'leaf',
+        'pepper-hot', 'carrot', 'lemon', 'apple-alt', 'seedling', 'leaf', 'pepper-hot', 'carrot'
+    ],
+    vehicles: [
+        'car', 'truck', 'truck-monster', 'truck-pickup', 'shuttle-van', 'car-side', 'truck-loading', 'truck-moving',
+        'shipping-fast', 'shuttle-van', 'truck', 'truck-monster', 'truck-pickup', 'shuttle-van', 'car-side', 'truck-loading',
+        'truck-moving', 'shipping-fast', 'shuttle-van', 'truck', 'truck-monster', 'truck-pickup', 'shuttle-van', 'car-side',
+        'truck-loading', 'truck-moving', 'shipping-fast', 'shuttle-van', 'truck', 'truck-monster', 'truck-pickup', 'shuttle-van'
+    ]
+};
+
+// Default to icons if category not found
+const icons = categories[category] || categories.icons;
+return icons[(value - 1) % icons.length];
 }
 });
 </script>

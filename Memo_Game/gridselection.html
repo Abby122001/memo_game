@@ -221,7 +221,150 @@ p{
 </div>
 
 
-<script src="settings.js"></script>
+<script>
+    // Audio elements
+    const backgroundMusic = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+    const buttonSound = new Audio('https://www.soundjay.com/buttons/sounds/button-09a.mp3');
+
+    // Game audio state
+    let isMusicPlaying = false;
+    let audioSettings = {
+      music: true,
+      sound: true,
+      language: 'en'
+    };
+
+    // Background music control
+    function startBackgroundMusic() {
+      if (!isMusicPlaying && audioSettings.music) {
+        backgroundMusic.loop = true;
+        backgroundMusic.volume = 0.5;
+        const playPromise = backgroundMusic.play();
+        
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.log('Autoplay prevented:', error);
+          });
+        }
+        
+        isMusicPlaying = true;
+      }
+    }
+    
+    function stopBackgroundMusic() {
+      backgroundMusic.pause();
+      backgroundMusic.currentTime = 0;
+      isMusicPlaying = false;
+    }
+    
+    // Play sound effect
+    function playSound(sound) {
+      if (audioSettings.sound) {
+        sound.currentTime = 0;
+        sound.volume = 0.5;
+        sound.play().catch(error => {
+          console.log('Sound play failed:', error);
+        });
+      }
+    }
+    
+    // Settings Panel Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const settingsButton = document.getElementById('settingsButton');
+      const settingsPanel = document.querySelector('.settings-panel');
+      const closeButton = document.querySelector('.close-settings');
+      const musicToggle = document.getElementById('music-toggle');
+      const soundToggle = document.getElementById('sound-toggle');
+      const languageSelect = document.getElementById('language');
+
+      // Toggle settings panel
+      function toggleSettings() {
+        settingsPanel.classList.toggle('show');
+        settingsButton.classList.toggle('active');
+        playSound(buttonSound);
+      }
+
+      // Open settings panel when clicking the settings button
+      if (settingsButton) {
+        settingsButton.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleSettings();
+        });
+      }
+
+      // Close settings panel when clicking the close button
+      if (closeButton) {
+        closeButton.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleSettings();
+        });
+      }
+
+      // Close settings panel when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!settingsPanel.contains(e.target) && e.target !== settingsButton) {
+          if (settingsPanel.classList.contains('show')) {
+            settingsPanel.classList.remove('show');
+            settingsButton.classList.remove('active');
+          }
+        }
+      });
+
+      // Load saved settings
+      function loadSettings() {
+        const savedSettings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
+        if (savedSettings.music !== undefined) {
+          musicToggle.checked = savedSettings.music;
+          audioSettings.music = savedSettings.music;
+        }
+        if (savedSettings.sound !== undefined) {
+          soundToggle.checked = savedSettings.sound;
+          audioSettings.sound = savedSettings.sound;
+        }
+        if (savedSettings.language) {
+          languageSelect.value = savedSettings.language;
+          audioSettings.language = savedSettings.language;
+        }
+        
+        // Initialize audio
+        if (audioSettings.music) {
+          startBackgroundMusic();
+        }
+      }
+
+      // Save settings
+      function saveSettings() {
+        const savedSettings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
+        const settings = {
+          ...savedSettings,
+          music: musicToggle.checked,
+          sound: soundToggle.checked,
+          language: languageSelect.value
+        };
+        localStorage.setItem('gameSettings', JSON.stringify(settings));
+        
+        // Update audio settings
+        audioSettings.music = musicToggle.checked;
+        audioSettings.sound = soundToggle.checked;
+        audioSettings.language = languageSelect.value;
+        
+        // Update audio state
+        if (audioSettings.music && !isMusicPlaying) {
+          startBackgroundMusic();
+        } else if (!audioSettings.music) {
+          stopBackgroundMusic();
+        }
+      }
+
+      // Initialize settings
+      loadSettings();
+
+      // Save settings when changed
+      musicToggle.addEventListener('change', saveSettings);
+      soundToggle.addEventListener('change', saveSettings);
+      languageSelect.addEventListener('change', saveSettings);
+    });
+  </script>
 
 <div class="container">
 <h1>Select Grid Size</h1>
@@ -304,12 +447,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle grid size selection
     document.querySelectorAll('.grid-option').forEach(option => {
         option.addEventListener('click', function() {
+            playSound(buttonSound);
             const rows = this.getAttribute('data-rows');
             const cols = this.getAttribute('data-cols');
             const cardCount = rows * cols;
             
+            // Get existing settings to preserve audio settings
+            const existingSettings = JSON.parse(localStorage.getItem('gameSettings') || '{}');
+            
             // Store the selected options in localStorage
             localStorage.setItem('gameSettings', JSON.stringify({
+                ...existingSettings,
                 category: category,
                 difficulty: this.getAttribute('data-difficulty'),
                 grid: {
@@ -328,6 +476,5 @@ document.addEventListener('DOMContentLoaded', function() {
     updateGridIcons(category);
 });
 </script>
-<script src="settings.js"></script>
 </body>
 </html>

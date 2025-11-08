@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Select Grid Size - Memory Game</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
 <style>
     * {
         margin: 0;
@@ -182,6 +183,46 @@
     <i class="fas fa-arrow-left"></i>
 </button>
 
+<!-- Settings Button and Panel -->
+<div class="bottom-right">
+  <button class="settings-icon" id="settingsButton">
+    <i class="fas fa-cog"></i>
+  </button>
+  <div class="settings-panel">
+    <div class="settings-header">
+      <h3>Game Settings</h3>
+      <button class="close-settings">&times;</button>
+    </div>
+    <div class="settings-content">
+      <div class="setting-option">
+        <span class="setting-label">Music</span>
+        <label class="switch">
+          <input type="checkbox" id="music-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-option">
+        <span class="setting-label">Sound FX</span>
+        <label class="switch">
+          <input type="checkbox" id="sound-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-option">
+        <span class="setting-label">Language</span>
+        <select id="language" class="language-select">
+          <option value="en">English</option>
+          <option value="es">Español</option>
+          <option value="fr">Français</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+  <script src="settings.js"></script>
+
 <div class="container">
     <h1>Select Grid Size</h1>
     
@@ -287,5 +328,6 @@
         updateGridIcons(category);
     });
 </script>
+<script src="settings.js"></script>
 </body>
 </html>

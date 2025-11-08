@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Memory Game - Select Grid Size</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <title>Memory Game - Select Grid Size</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="style.css">
   <style>
     .floating-cards {
@@ -165,7 +165,46 @@
   </style>
 </head>
 <body>
+  <!-- Settings Button and Panel -->
+  <div class="bottom-right">
+    <button class="settings-icon" id="settingsButton">
+      <i class="fas fa-cog"></i>
+    </button>
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h3>Game Settings</h3>
+        <button class="close-settings">&times;</button>
+      </div>
+      <div class="settings-content">
+        <div class="setting-option">
+          <span class="setting-label">Music</span>
+          <label class="switch">
+            <input type="checkbox" id="music-toggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-option">
+          <span class="setting-label">Sound FX</span>
+          <label class="switch">
+            <input type="checkbox" id="sound-toggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-option">
+          <span class="setting-label">Language</span>
+          <select id="language" class="language-select">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <script src="floating-cards.js"></script>
+  <script src="settings.js"></script>
+  <script src="game.js"></script>
   <button class="back-button" onclick="window.location.href='index.html'">
     <i class="fas fa-arrow-left"></i>
   </button>

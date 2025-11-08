@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Select Level</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<script src="settings.js" defer></script>
+<script src="floating-cards.js"></script>
 <style>
   .floating-cards {
     position: fixed;
@@ -36,6 +39,7 @@
     50% { transform: translateY(-50px) rotate(5deg); }
   }
 </style>
+
 <style>
 /* Game Controls */
 .game-controls {
@@ -45,12 +49,14 @@
 }
 
 .control-btn {
-  padding: 8px 16px;
+  padding: 5px 5px;
   border: none;
   border-radius: 20px;
-  font-weight: bold;
+  font-weight: normal;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 16px;
+  width: 120px;
 }
 
 .start-btn {
@@ -279,7 +285,7 @@ background: linear-gradient(145deg, #ffd4a3, #dfb18f);
 border-radius: 20px;
 padding: 20px;
 width: 90%;
-max-width: 400px;
+max-width: 500px;
 max-height: 90vh;
 box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 position: fixed;
@@ -484,7 +490,43 @@ text-transform: capitalize;
 </style>
 </head>
 <body>
-  <script src="floating-cards.js"></script>
+  <!-- Settings Button and Panel -->
+   <div class="bottom-right">
+    <i class="fas fa-cog settings-icon"></i>
+    <div class="settings-panel">
+      <div class="settings-header">
+        <h3>Game Settings</h3>
+        <button class="close-settings">&times;</button>
+      </div>
+      <div class="settings-content">
+        <div class="setting-option">
+          <span class="setting-label">Music</span>
+          <label class="switch">
+            <input type="checkbox" id="music-toggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-option">
+          <span class="setting-label">Sound FX</span>
+          <label class="switch">
+            <input type="checkbox" id="sound-toggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="setting-option">
+          <span class="setting-label">Language</span>
+          <select id="language" class="language-select">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  
 
 <div class="level-select-container" role="main" aria-label="Select Level">
 <button class="back-button" onclick="window.location.href='index.html'">
@@ -1245,6 +1287,5 @@ loadGameProgress();
 renderLevels();
 });
 </script>
-
 </body>
 </html>

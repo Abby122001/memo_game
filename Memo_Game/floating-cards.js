@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Random animation duration and delay
     const duration = 15 + Math.random() * 15;
-    const delay = Math.random() * -20;
+    const delay = Math.random() * 15;
     
     // Random color
     const color = colors[Math.floor(Math.random() * colors.length)];

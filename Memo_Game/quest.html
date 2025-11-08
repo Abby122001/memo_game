@@ -884,6 +884,13 @@ text-transform: capitalize;
       languageSelect.addEventListener('change', saveSettings);
     });
   </script>
+  <script>
+    document.addEventListener('pointerdown', () => {
+      if (audioSettings.music && !isMusicPlaying) {
+        startBackgroundMusic();
+      }
+    }, { once: true });
+  </script>
   <script src="floating-cards.js"></script>
 
 

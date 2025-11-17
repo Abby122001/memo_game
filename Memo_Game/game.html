@@ -575,6 +575,7 @@ let timeUpModal = null; // Time Up modal element
 const matchSound = new Audio('./sounds/match-sound.mp3');
 const flipSound = new Audio('./sounds/flip-sound.mp3');
 const wrongSound = new Audio('./sounds/failed-sound.mp3');
+const completedSound = new Audio('./sounds/completed-sound.mp3');
 
 // Get game settings from localStorage
 const gameSettings = JSON.parse(localStorage.getItem('gameSettings')) || {
@@ -861,7 +862,7 @@ function flipCard() {
 if (!gameStarted || lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) {
     return false;
 }
-// playSound(flipSound);
+flipSound.play().catch(e => console.log('Could not play sound:', e));
 
 // Start the timer on first card flip if not already started
 if (moves === 0 && !timer) {
@@ -1038,7 +1039,10 @@ modal.innerHTML = `
     </div>
 `;
 
+
 modal.style.display = 'flex';
+const completedSound = new Audio('./sounds/completed-sound.mp3');
+completedSound.play().catch(e => console.log('Could not play sound:', e));
 
 // Add event listener for next level button
 const nextLevelBtn = document.getElementById('nextLevelBtn');

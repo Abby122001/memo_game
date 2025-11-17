@@ -747,6 +747,9 @@ text-transform: capitalize;
     const buttonSound = new Audio('https://www.soundjay.com/buttons/sounds/button-09a.mp3');
     const matchSound = new Audio('./sounds/match-sound.mp3');
     const flipSound = new Audio('./sounds/flip-sound.mp3');
+    const completedSound = new Audio('./sounds/completed-sound.mp3');
+    const noMatchSound = new Audio('./sounds/no-match.mp3');
+    const wrongSound = new Audio('./sounds/failed-sound.mp3');
 
     // Game audio state
     let isMusicPlaying = false;
@@ -1170,6 +1173,7 @@ function startTimer() {
       if (gameState.timeLeft <= 0) {
         clearInterval(gameState.timerInterval);
         endGame(false); // Game over - time's up
+        
       }
     }
   }, 1000);
@@ -1195,6 +1199,7 @@ function togglePauseGame() {
   }
   
   gameState.canFlip = !gameState.gamePaused;
+  playSound(buttonSound);
 }
 
 // Initialize the game
@@ -1489,8 +1494,9 @@ if (isWin) {
   
   showModal(starsEarned, gameState.currentLevel);
 } else {
-  // Show time up modal
+  // Show time up modal and play sound
   timeUpModal.style.display = 'flex';
+  wrongSound.play().catch(e => console.log('Could not play sound:', e));
 }
 }
 
@@ -1519,6 +1525,7 @@ if (firstEmoji === secondEmoji) {
   }
 } else {
   // No match - flip cards back after a delay
+  noMatchSound.play().catch(e => console.log('Could not play sound:', e));
   gameState.canFlip = false;
   setTimeout(() => {
     firstCard.classList.remove('flipped');
@@ -1607,6 +1614,7 @@ document.body.appendChild(modal);
 // Modal functionality
 const showModal = (stars, currentLevel) => {
 console.log('Current Level:', currentLevel);
+completedSound.play().catch(e => console.log('Could not play sound:', e));
 const starsElement = modal.querySelector('.modal-stars');
 const starsCountElement = modal.querySelector('.stars-count');
 const levelNumberElement = modal.querySelector('.level-number');

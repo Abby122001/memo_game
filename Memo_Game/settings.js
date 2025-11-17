@@ -1,5 +1,5 @@
 // Audio elements
-const backgroundMusic = new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+const backgroundMusic = new Audio('./sounds/background-music.mp3');
 const buttonSound = new Audio('https://www.soundjay.com/buttons/sounds/button-09a.mp3');
 
 // Game state

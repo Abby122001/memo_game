@@ -572,6 +572,9 @@ let timeLimit = 60; // Default time limit in seconds
 let gameStarted = false;
 let difficulty = 'medium'; // Default difficulty
 let timeUpModal = null; // Time Up modal element
+const matchSound = new Audio('./sounds/match-sound.mp3');
+const flipSound = new Audio('./sounds/flip-sound.mp3');
+const wrongSound = new Audio('./sounds/failed-sound.mp3');
 
 // Get game settings from localStorage
 const gameSettings = JSON.parse(localStorage.getItem('gameSettings')) || {
@@ -609,23 +612,23 @@ initGame();
 setTimeout(showInstructions, 500); // Small delay to ensure DOM is ready
 
 // Event listeners
-restartBtn.addEventListener('click', function() {
-const restartIcon = document.getElementById('restartIcon');
-// Add loading class and disable button
-restartIcon.className = 'fas fa-spinner fa-spin';
-restartBtn.disabled = true;
+// restartBtn.addEventListener('click', function() {
+// const restartIcon = document.getElementById('restartIcon');
+// // Add loading class and disable button
+// restartIcon.className = 'fas fa-spinner fa-spin';
+// restartBtn.disabled = true;
 
-// Small delay to show the loading state
-setTimeout(() => {
-    initGame();
-    // Restore the icon and re-enable button after game restarts
-    restartIcon.className = 'fas fa-redo';
-    restartBtn.disabled = false;
-}, 500); // 500ms delay to show loading state
-});
-backBtn.addEventListener('click', () => {
-window.location.href = 'gridselection.html';
-});
+// // Small delay to show the loading state
+// setTimeout(() => {
+//     initGame();
+//     // Restore the icon and re-enable button after game restarts
+//     restartIcon.className = 'fas fa-redo';
+//     restartBtn.disabled = false;
+// }, 500); // 500ms delay to show loading state
+// });
+// backBtn.addEventListener('click', () => {
+// window.location.href = 'gridselection.html';
+// });
 
 function initGame() {
 // Remove any existing completion modal
@@ -858,6 +861,7 @@ function flipCard() {
 if (!gameStarted || lockBoard || this.classList.contains('flipped') || this.classList.contains('matched')) {
     return false;
 }
+// playSound(flipSound);
 
 // Start the timer on first card flip if not already started
 if (moves === 0 && !timer) {
@@ -900,6 +904,17 @@ moves++;
 updateMoves();
 }
 
+
+// function playSound(sound) {
+//       if (audioSettings.sound) {
+//         sound.currentTime = 0;
+//         sound.volume = 0.5;
+//         sound.play().catch(error => {
+//           console.log('Sound play failed:', error);
+//         });
+//       }
+//     }
+    
 function checkForMatch() {
 const isMatch = firstCard.dataset.value === secondCard.dataset.value;
 
@@ -909,7 +924,6 @@ if (isMatch) {
     secondCard.classList.add('matched');
     
     // Play match sound
-    const matchSound = new Audio('sounds/match.mp3');
     matchSound.play().catch(e => console.log('Could not play sound:', e));
     
     matches++;
@@ -974,6 +988,7 @@ if (timeLeft <= 0) {
     // Ensure the time-up modal exists before trying to show it
     const modal = document.querySelector('.timeup-modal');
     if (modal) {
+        wrongSound.play().catch(e => console.log('Could not play sound:', e));
         modal.style.display = 'flex';
     }
     return;

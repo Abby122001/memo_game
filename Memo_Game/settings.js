@@ -1,6 +1,7 @@
 // Audio elements
 const backgroundMusic = new Audio('./sounds/background-music.mp3');
-const buttonSound = new Audio('https://www.soundjay.com/buttons/sounds/button-09a.mp3');
+// const buttonSound = new Audio('https://www.soundjay.com/buttons/sounds/button-09a.mp3');
+const buttonSound = new Audio('./sounds/flip-sound.mp3');
 
 // Game state
 const gameState = {

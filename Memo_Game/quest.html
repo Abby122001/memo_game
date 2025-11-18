@@ -744,7 +744,7 @@ text-transform: capitalize;
   <script>
     // Audio elements
     const backgroundMusic = new Audio('./sounds/background-music.mp3');
-    const buttonSound = new Audio('https://www.soundjay.com/buttons/sounds/button-09a.mp3');
+    const buttonSound = new Audio('./sounds/flip-sound.mp3');
     const matchSound = new Audio('./sounds/match-sound.mp3');
     const flipSound = new Audio('./sounds/flip-sound.mp3');
     const completedSound = new Audio('./sounds/completed-sound.mp3');
@@ -784,12 +784,46 @@ text-transform: capitalize;
     
     // Play sound effect
     function playSound(sound) {
+      console.log('playSound called with:', sound);
+      // Ensure audioSettings exists and has a default sound value
+      if (typeof audioSettings === 'undefined') {
+        audioSettings = { sound: true };
+        console.log('Initialized audioSettings:', audioSettings);
+      }
+      
+      console.log('audioSettings.sound:', audioSettings.sound);
+      console.log('sound element:', sound);
+      
       if (audioSettings.sound) {
-        sound.currentTime = 0;
-        sound.volume = 0.5;
-        sound.play().catch(error => {
-          console.log('Sound play failed:', error);
-        });
+        try {
+          console.log('Attempting to play sound...');
+          sound.currentTime = 0;
+          sound.volume = 0.5;
+          const playPromise = sound.play();
+          
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              console.log('Sound playback started successfully');
+            }).catch(error => {
+              console.error('Sound play was prevented:', error);
+              console.log('Sound element state:', {
+                readyState: sound.readyState,
+                error: sound.error,
+                networkState: sound.networkState,
+                src: sound.src
+              });
+            });
+          }
+        } catch (error) {
+          console.error('Error playing sound:', error);
+          console.log('Sound element state on error:', {
+            readyState: sound.readyState,
+            error: sound.error,
+            src: sound.src
+          });
+        }
+      } else {
+        console.log('Sound is disabled in settings');
       }
     }
     
@@ -801,6 +835,33 @@ text-transform: capitalize;
       const musicToggle = document.getElementById('music-toggle');
       const soundToggle = document.getElementById('sound-toggle');
       const languageSelect = document.getElementById('language');
+      const homeButton = document.getElementById('backButton');
+
+     homeButton.addEventListener('click', function(e) {
+    e.preventDefault(); // Prevent default navigation
+    console.log('back button clicked');
+    const sound = new Audio('./sounds/flip-sound.mp3');
+    sound.volume = 0.5;
+    
+    // sound.play().then(() => {
+    //     console.log('Sound played successfully');
+    //     // Navigate after sound starts playing
+    //     window.location.href = 'index.html';
+    // }).catch(error => {
+    //     console.error('Error playing sound:', error);
+    //     // Still navigate even if sound fails
+    //     window.location.href = 'index.html';;
+    // });
+    
+    playSound(flipSound);
+    // window.location.href = 'index.html';
+    // Add a fallback in case the sound takes too long
+    setTimeout(() => {
+        if (window.location.href.endsWith('quest.html')) {
+            window.location.href = 'index.html';
+        }
+    }, 300);
+});
 
       // Toggle settings panel
       function toggleSettings() {
@@ -898,7 +959,7 @@ text-transform: capitalize;
 
 
 <div class="level-select-container" role="main" aria-label="Select Level">
-<button class="back-button" onclick="window.location.href='index.html'">
+<button class="back-button" id="backButton">
 <i class="fas fa-home"></i>
 </button>
 <div class="title-bar">SELECT LEVEL</div>
@@ -979,6 +1040,7 @@ const levels = [
 const levelsGrid = document.getElementById('levelsGrid');
 const prevArrow = document.getElementById('prevArrow');
 const nextArrow = document.getElementById('nextArrow');
+
 
 let selectedLevelIndex = null;
 let currentPage = 0; // 0 = first page, 1 = second page
@@ -1128,6 +1190,7 @@ const closeGameBtn = document.getElementById('closeGame');
 document.getElementById('startGameBtn').addEventListener('click', initGame);
 document.getElementById('pauseGameBtn').addEventListener('click', togglePauseGame);
 
+
 // Close game button
 closeGameBtn.addEventListener('click', () => {
   gameContainer.style.display = 'none';
@@ -1199,7 +1262,7 @@ function togglePauseGame() {
   }
   
   gameState.canFlip = !gameState.gamePaused;
-  playSound(buttonSound);
+  playSound(flipSound);
 }
 
 // Initialize the game
@@ -1452,6 +1515,7 @@ startGame(gameState.currentLevel);
 });
 
 timeUpModal.querySelector('.back-button').addEventListener('click', () => {
+playSound(flipSound);
 timeUpModal.style.display = 'none';
 gameContainer.style.display = 'none';
 document.querySelector('.level-select-container').style.display = 'block';

@@ -207,22 +207,51 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const gameOptions = document.querySelectorAll('.game-option');
+      const backButton = document.getElementById('backButton');
       const saved = JSON.parse(localStorage.getItem('gameSettings') || '{}');
       const soundOn = saved.sound !== false;
+      const flipSound = new Audio('./sounds/flip-sound.mp3');
+      
+      // Handle game option clicks
       gameOptions.forEach(option => {
         option.addEventListener('click', function() {
-          if (typeof buttonSound !== 'undefined' && soundOn) {
-            try {
-              buttonSound.currentTime = 0;
-              buttonSound.volume = 0.5;
-              buttonSound.play();
-            } catch (e) {}
-          }
+          playnavigationSound();
         });
       });
+      
+      // Handle back button click
+      if (backButton) {
+        backButton.addEventListener('click', function() {
+          playnavigationSound();
+          // Small delay to allow sound to play before navigation
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 200);
+        });
+      }
+      
+      function playButtonSound() {
+        if (typeof buttonSound !== 'undefined' && soundOn) {
+          try {
+            buttonSound.currentTime = 0;
+            buttonSound.volume = 0.5;
+            buttonSound.play();
+          } catch (e) {}
+        }
+      }
+      function playnavigationSound() {
+        if (typeof flipSound !== 'undefined' && soundOn) {
+          try {
+            flipSound.currentTime = 0;
+            flipSound.volume = 0.5;
+            flipSound.play();
+          } catch (e) {}
+        }
+      }
     });
   </script>
-  <button class="back-button" onclick="window.location.href='index.html'">
+  
+  <button class="back-button" id="backButton">
     <i class="fas fa-arrow-left"></i>
   </button>
 
